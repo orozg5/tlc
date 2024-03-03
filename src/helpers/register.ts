@@ -1,7 +1,7 @@
-import UserRegister from "@/interfaces/user_register.interface";
+import IRegister from "@/interfaces/IRegister";
 import axiosInstance from "axios";
 
-const register = async (user: UserRegister) => {
+const register = async (user: IRegister) => {
   try {
     const response = await axiosInstance.post("/api/auth/register", user, {
       headers: {

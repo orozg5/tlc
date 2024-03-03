@@ -18,13 +18,13 @@ import tutor from "@/lotties/tutor.json";
 import Link from "next/link";
 import { FaArrowLeft, FaEye, FaEyeSlash } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
-import UserRegister from "@/interfaces/user_register.interface";
 import register from "@/helpers/register";
 import { useRouter } from "next/navigation";
+import IRegister from "@/interfaces/IRegister";
 
 export default function signup() {
   const router = useRouter();
-  const [user, setUser] = useState<UserRegister>({
+  const [user, setUser] = useState<IRegister>({
     role: "student",
     email: "",
     password: "",
@@ -80,7 +80,6 @@ export default function signup() {
     try {
       const res = await register(user);
       if (res.status === 200) {
-        router.push(`/api/auth/verification-email?email=${user.email}`);
       }
     } catch (error) {
       setError("User already exists.");

@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function Header() {
   return (
     <Flex
-      h="80px"
+      h="100px"
       p="16px"
       bgColor="#5C8374"
       position="sticky"

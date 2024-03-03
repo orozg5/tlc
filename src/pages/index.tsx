@@ -1,20 +1,13 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
-import getUsers from "@/helpers/getUsers";
 import Header from "@/components/shared/Header";
 import Fotter from "@/components/shared/Fotter";
 import Main from "@/components/features/LandingPage/Main";
 import AboutUs from "@/components/features/LandingPage/AboutUs";
+import getMe from "@/helpers/getMe";
+import { GetServerSideProps } from "next";
+import IHomeProps from "@/interfaces/IHomeProps";
 
-export default function Home() {
-  /*
-  const [userData, setUserData] = useState({ email: "" });
-  useEffect(() => {
-    getUsers().then((resp) => {
-      setUserData(resp);
-    });
-  }, []);*/
-
+export default function Home({ userData }: IHomeProps) {
   return (
     <>
       <Head>
@@ -33,3 +26,22 @@ export default function Home() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ req }) => {
+  const userData = await getMe();
+
+  if (!userData) {
+    return {
+      redirect: {
+        destination: "/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};
