@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const user_id = userQueryResult.rows[0].user_id;
   const expiry_date = userQueryResult.rows[0].expiry_date;
 
-  const date = new Date();
+  const date = new Date(Date.now());
 
   await query(`DELETE FROM verification WHERE verification_hash = $1`, [hash]);
   if (expiry_date > date) {

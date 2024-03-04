@@ -1,7 +1,7 @@
 export default interface HomeProps {
-  userData: {
-    role: string;
+  userData?: {
     id: string;
+    role: string;
     email: string;
   };
 }

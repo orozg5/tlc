@@ -1,8 +1,17 @@
 import { Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { Link as ScrollLink } from "react-scroll";
 import Link from "next/link";
+import IHomeProps from "@/interfaces/IHomeProps";
+import logout from "@/helpers/logout";
 
-export default function Header() {
+export default function Header({ userData }: IHomeProps) {
+  const logOut = async () => {
+    const res = await logout();
+    if (res.status === 200) {
+      window.location.reload();
+    }
+  };
+
   return (
     <Flex
       h="100px"
@@ -39,16 +48,25 @@ export default function Header() {
         </ScrollLink>
       </Flex>
       <Flex gap="16px">
-        <Link href="/signin">
-          <Button variant="unstyled" _hover={{ color: "black" }}>
-            Sign in
+        {userData?.email && (
+          <Button onClick={logOut} bgColor="#F1C93B" _hover={{ bgColor: "#FAE392" }}>
+            Log out
           </Button>
-        </Link>
-        <Link href="/signup">
-          <Button bgColor="#F1C93B" _hover={{ bgColor: "#FAE392" }}>
-            Sign up
-          </Button>
-        </Link>
+        )}
+        {!userData?.email && (
+          <>
+            <Link href="/signin">
+              <Button variant="unstyled" _hover={{ color: "black" }}>
+                Sign in
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button bgColor="#F1C93B" _hover={{ bgColor: "#FAE392" }}>
+                Sign up
+              </Button>
+            </Link>
+          </>
+        )}
       </Flex>
     </Flex>
   );

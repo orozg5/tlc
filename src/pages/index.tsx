@@ -3,9 +3,9 @@ import Header from "@/components/shared/Header";
 import Fotter from "@/components/shared/Fotter";
 import Main from "@/components/features/LandingPage/Main";
 import AboutUs from "@/components/features/LandingPage/AboutUs";
-import getMe from "@/helpers/getMe";
 import { GetServerSideProps } from "next";
 import IHomeProps from "@/interfaces/IHomeProps";
+import { getMe } from "@/utils/getMe";
 
 export default function Home({ userData }: IHomeProps) {
   return (
@@ -17,25 +17,21 @@ export default function Home({ userData }: IHomeProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header />
-
+      <Header userData={userData} />
       <Main />
       <AboutUs />
-
       <Fotter id="contacts" />
     </>
   );
 }
 
+
 export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ req }) => {
-  const userData = await getMe();
+  let userData = await getMe(req);
 
   if (!userData) {
     return {
-      redirect: {
-        destination: "/signin",
-        permanent: false,
-      },
+      props: {},
     };
   }
 
@@ -45,3 +41,4 @@ export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ req }
     },
   };
 };
+
