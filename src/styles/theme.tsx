@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import { menu } from "./menu";
 
 export const theme = extendTheme({
   styles: {
@@ -12,5 +13,8 @@ export const theme = extendTheme({
   fonts: {
     body: "Anta, sans-serif",
     heading: "Anta, serif",
+  },
+  components: {
+    Menu: menu,
   },
 });

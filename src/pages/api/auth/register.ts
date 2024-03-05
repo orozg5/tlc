@@ -24,6 +24,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const userQueryResult = await query(`SELECT id FROM users WHERE email = $1`, [email]);
     const user_id = userQueryResult.rows[0].id;
 
+    if (role == "student") {
+      await query(`INSERT INTO students (user_id) VALUES ($1)`, [user_id]);
+    } else if (role == "tutor") {
+      await query(`INSERT INTO instructors (user_id) VALUES ($1)`, [user_id]);
+    }
+
     const expiry_date = new Date();
     expiry_date.setHours(expiry_date.getHours() + 24);
     await query(`INSERT INTO verification (user_id, verification_hash, expiry_date) VALUES ($1, $2, $3)`, [
@@ -35,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const Mailjet = require("node-mailjet");
     const mailjet = Mailjet.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 
-    const response = await mailjet.post("send", { version: "v3.1" }).request({
+    await mailjet.post("send", { version: "v3.1" }).request({
       Messages: [
         {
           From: {

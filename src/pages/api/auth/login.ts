@@ -26,7 +26,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const id = data.rows[0].id;
       const role = data.rows[0].role;
 
-      const encryptedSessionData = await encrypt({ id: id, role: role, email: email });
+      const encryptedSessionData = await encrypt({
+        id: id,
+        role: role,
+        email: email,
+      });
 
       const cookie = serialize("session", encryptedSessionData, {
         httpOnly: true,

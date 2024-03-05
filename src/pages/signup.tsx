@@ -80,6 +80,10 @@ export default function signup() {
     try {
       const res = await register(user);
       if (res.status === 200) {
+        router.push("/signin");
+        setTimeout(() => {
+          alert("Verification email has been sent. Please activate your account first.");
+        }, 200);
       }
     } catch (error) {
       setError("User already exists.");

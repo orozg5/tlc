@@ -1,10 +1,10 @@
 import { Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { Link as ScrollLink } from "react-scroll";
 import Link from "next/link";
-import IHomeProps from "@/interfaces/IHomeProps";
+import IUserProps from "@/interfaces/IUserProps";
 import logout from "@/helpers/logout";
 
-export default function Header({ userData }: IHomeProps) {
+export default function Header({ userData }: IUserProps) {
   const logOut = async () => {
     const res = await logout();
     if (res.status === 200) {
@@ -22,8 +22,6 @@ export default function Header({ userData }: IHomeProps) {
       justifyContent="space-between"
       align="center"
       zIndex="2"
-      borderBottomLeftRadius="8px"
-      borderBottomRightRadius="8px"
     >
       <Flex align="center" gap="16px">
         <Link href="/">
@@ -31,6 +29,13 @@ export default function Header({ userData }: IHomeProps) {
             TLC
           </Heading>
         </Link>
+        {userData?.email && (
+          <Link href="/home">
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+              Home
+            </Text>
+          </Link>
+        )}
         <ScrollLink to="aboutus" spy={true} smooth={true} duration={500} offset={-80}>
           <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
             About us

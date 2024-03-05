@@ -1,21 +1,23 @@
-import { Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import IHomeProps from "@/interfaces/IHomeProps";
+import IUserProps from "@/interfaces/IUserProps";
+import RegHeader from "@/components/shared/RegHeader";
+import getCurrentUserInfo from "@/helpers/getCurrentUserInfo";
 import { getMe } from "@/utils/getMe";
 
-export default function home({ userData }: IHomeProps) {
+export default function home({ userData }: IUserProps) {
   return (
     <>
-      <Text>{userData?.email}</Text>
-      <Text>{userData?.role}</Text>
+      <RegHeader userData={userData} />
+      {userData?.role == "student" && <></>}
+      {userData?.role == "tutor" && <></>}
     </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ req }) => {
-  const userData = await getMe(req);
+export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }) => {
+  let session = await getMe(req);
 
-  if (!userData) {
+  if (!session) {
     return {
       redirect: {
         destination: "/signin",
@@ -23,6 +25,8 @@ export const getServerSideProps: GetServerSideProps<IHomeProps> = async ({ req }
       },
     };
   }
+
+  let userData = await getCurrentUserInfo(req);
 
   return {
     props: {
