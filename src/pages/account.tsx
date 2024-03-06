@@ -29,6 +29,7 @@ import getCurrentUserInfo from "@/helpers/getCurrentUserInfo";
 export default function account({ userData }: IUserProps) {
   const router = useRouter();
   const [user, setUser] = useState(userData);
+  const [profile, setProfile] = useState(userData?.profile_photo);
   const profileRef = useRef<HTMLInputElement>(null);
 
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -39,6 +40,29 @@ export default function account({ userData }: IUserProps) {
     if (profileRef.current) {
       profileRef.current.click();
     }
+  };
+
+  const handleProfileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        if (event.target) {
+          let base64String = event.target.result as string;
+          base64String = base64String.split(",")[1];
+          
+          setUser(
+            user && {
+              ...user,
+              profile_photo: base64String,
+            }
+          );
+          setProfile(base64String)
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = "";
   };
 
   const maleOptions = {
@@ -80,8 +104,14 @@ export default function account({ userData }: IUserProps) {
         </Heading>
 
         <Flex direction="column">
-          <Input id="profile_photo" type="file" ref={profileRef} style={{ display: "none" }} />
-          <Avatar border="solid 4px #183D3D" mt="32px" w="320px" h="320px" src={user?.profile_photo_url} />
+          <Input
+            id="profile_photo"
+            type="file"
+            ref={profileRef}
+            style={{ display: "none" }}
+            onChange={handleProfileChange}
+          />
+          <Avatar border="solid 4px #183D3D" mt="32px" w="320px" h="320px" src={`data:image/jpeg;base64,${profile}`} />
           <Button
             mt="32px"
             mb="16px"
@@ -90,6 +120,7 @@ export default function account({ userData }: IUserProps) {
             _hover={{ bgColor: "#93B1A6", color: "#040D12" }}
             fontWeight="50px"
             onClick={handleProfileUpload}
+            value={user?.profile_photo}
           >
             Upload new profile photo
           </Button>

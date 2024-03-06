@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       grade,
       address,
       phone,
-      profile_photo_url,
+      profile_photo,
       educational_attainment,
       finished_school,
       description,
@@ -34,12 +34,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (role == "student") {
       await query(
-        "UPDATE students SET first_name = $2, last_name = $3, gender = $4, date_of_birth = $5, school = $6, grade = $7, address = $8, phone = $9, profile_photo_url = $10 WHERE user_id = $1",
-        [id, first_name, last_name, gender, birth, school, grade, address, phone, profile_photo_url]
+        "UPDATE students SET first_name = $2, last_name = $3, gender = $4, date_of_birth = $5, school = $6, grade = $7, address = $8, phone = $9, profile_photo = $10 WHERE user_id = $1",
+        [id, first_name, last_name, gender, birth, school, grade, address, phone, profile_photo]
       );
     } else {
       await query(
-        "UPDATE students SET first_name = $2, last_name = $3, gender = $4, date_of_birth = $5, educational_attainment = $6, finished_school = $7, address = $8, phone = $9, profile_photo_url = $10, description = $11 WHERE user_id = $1",
+        "UPDATE students SET first_name = $2, last_name = $3, gender = $4, date_of_birth = $5, educational_attainment = $6, finished_school = $7, address = $8, phone = $9, profile_photo = $10, description = $11 WHERE user_id = $1",
         [
           id,
           first_name,
@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           finished_school,
           address,
           phone,
-          profile_photo_url,
+          profile_photo,
           description,
         ]
       );

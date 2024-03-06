@@ -44,7 +44,7 @@ export default function RegHeader({ userData }: IUserProps) {
           {userData?.first_name} {userData?.last_name}
         </Text>
         <Menu>
-          <MenuButton as={Avatar} src={userData?.profile_photo_url} border="solid 1px #183D3D" size="md" />
+          <MenuButton as={Avatar} src={`data:image/jpeg;base64,${userData?.profile_photo}`} border="solid 1px #183D3D" size="md" />
           <MenuList>
             <MenuItem color="black" as="a" href="/account">
               Account

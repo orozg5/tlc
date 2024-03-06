@@ -13,5 +13,5 @@ export default interface IUser {
   description?: string;
   address: string;
   phone?: string;
-  profile_photo_url?: string;
+  profile_photo?: string;
 }
