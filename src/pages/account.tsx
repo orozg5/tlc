@@ -50,14 +50,14 @@ export default function account({ userData }: IUserProps) {
         if (event.target) {
           let base64String = event.target.result as string;
           base64String = base64String.split(",")[1];
-          
+
           setUser(
             user && {
               ...user,
               profile_photo: base64String,
             }
           );
-          setProfile(base64String)
+          setProfile(base64String);
         }
       };
       reader.readAsDataURL(file);
@@ -171,7 +171,8 @@ export default function account({ userData }: IUserProps) {
           </Box>
         </Flex>
 
-        <Flex mt="16px" gap="32px" align="center" justify="center" textAlign="center">
+        <Text mt="16px">Gender</Text>
+        <Flex gap="32px" align="center" justify="center" textAlign="center">
           <Box
             w="232px"
             border={user?.gender == "male" ? "#183D3D 4px solid" : "#040D12 1px solid"}
@@ -180,9 +181,10 @@ export default function account({ userData }: IUserProps) {
             _hover={{ borderColor: "#93B1A6", color: "#93B1A6" }}
             onClick={() => setUser(user && { ...user, gender: "male" })}
           >
-            <Lottie options={maleOptions} height="200px" width="200px" />
+            <Lottie options={maleOptions} height="24px" width="24px" />
             <Text>Male</Text>
           </Box>
+
           <Box
             w="232px"
             border={user?.gender == "female" ? "#183D3D 4px solid" : "#040D12 1px solid"}
@@ -191,9 +193,10 @@ export default function account({ userData }: IUserProps) {
             _hover={{ borderColor: "#93B1A6", color: "#93B1A6" }}
             onClick={() => setUser(user && { ...user, gender: "female" })}
           >
-            <Lottie options={femaleOptions} height="200px" width="200px" />
+            <Lottie options={femaleOptions} height="24px" width="24px" />
             <Text>Female</Text>
           </Box>
+
           <Flex
             direction="column"
             align="center"
@@ -202,11 +205,11 @@ export default function account({ userData }: IUserProps) {
             borderRadius="16px"
             color="#040D12"
             _hover={{ borderColor: "#93B1A6", color: "#93B1A6" }}
-            p="18px 18px 0px 18px"
+            p="4px 4px 0px 4px"
             onClick={() => setUser(user && { ...user, gender: "other" })}
           >
-            <PiGenderNeuterBold size="164px" color="#1f1f1f" />
-            <Text mt="18px">Other</Text>
+            <PiGenderNeuterBold size="20px" color="#1f1f1f" />
+            <Text>Other</Text>
           </Flex>
         </Flex>
 
