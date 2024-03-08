@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       );
     } else {
       await query(
-        "UPDATE students SET first_name = $2, last_name = $3, gender = $4, date_of_birth = $5, educational_attainment = $6, finished_school = $7, address = $8, phone = $9, profile_photo = $10, description = $11 WHERE user_id = $1",
+        "UPDATE instructors SET first_name = $2, last_name = $3, gender = $4, date_of_birth = $5, educational_attainment = $6, finished_school = $7, address = $8, phone = $9, profile_photo = $10, description = $11 WHERE user_id = $1",
         [
           id,
           first_name,
