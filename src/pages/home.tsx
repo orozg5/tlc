@@ -3,10 +3,13 @@ import IUserProps from "@/interfaces/IUserProps";
 import RegHeader from "@/components/shared/RegHeader";
 import getCurrentUserInfo from "@/helpers/getCurrentUserInfo";
 import { getMe } from "@/utils/getMe";
+import { useRef, useState } from "react";
+import ProfileSetup from "@/components/features/ProfileSetup";
 
 export default function home({ userData }: IUserProps) {
   return (
     <>
+      {!userData?.first_name && <ProfileSetup userData={userData} />}
       <RegHeader userData={userData} />
       {userData?.role == "student" && <></>}
       {userData?.role == "tutor" && <></>}
