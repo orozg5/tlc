@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Show, Text } from "@chakra-ui/react";
 import Lottie from "react-lottie";
 import teach from "@/lotties/teach.json";
 
@@ -20,8 +20,9 @@ export default function Main() {
         width="1000px"
         style={{ position: "absolute", cursor: "default", opacity: "0.5" }}
       />
+
       <Box zIndex="1">
-        <Heading size="2xl">
+        <Heading textAlign="center" size="2xl">
           <Text fontSize="90px" color="#183D3D" as="span">
             T
           </Text>

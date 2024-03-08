@@ -103,7 +103,7 @@ export default function account({ userData }: IUserProps) {
           TLC
         </Heading>
 
-        <Flex direction="column">
+        <Flex direction="column" align="center">
           <Input
             id="profile_photo"
             type="file"
@@ -111,7 +111,13 @@ export default function account({ userData }: IUserProps) {
             style={{ display: "none" }}
             onChange={handleProfileChange}
           />
-          <Avatar border="solid 4px #183D3D" mt="32px" w="320px" h="320px" src={`data:image/jpeg;base64,${profile}`} />
+          <Avatar
+            border="solid 4px #183D3D"
+            mt="32px"
+            w={{ base: "232px", sm: "320px" }}
+            h={{ base: "232px", sm: "320px" }}
+            src={`data:image/jpeg;base64,${profile}`}
+          />
           <Button
             mt="32px"
             mb="16px"
@@ -121,6 +127,7 @@ export default function account({ userData }: IUserProps) {
             fontWeight="50px"
             onClick={handleProfileUpload}
             value={user?.profile_photo}
+            w="232px"
           >
             Upload new profile photo
           </Button>
@@ -128,14 +135,14 @@ export default function account({ userData }: IUserProps) {
       </Flex>
 
       <Flex direction="column" p="32px" bg="#5C8374" color="#040D12" align="center">
-        <Flex justify="center" gap="32px" textAlign="center">
+        <Flex justify="center" gap="32px" textAlign="center" direction={{ base: "column", lg: "row" }}>
           <Box>
             <Text>First name</Text>
             <Input
               id="first_name"
               value={user?.first_name}
               onChange={handleUserChange}
-              w="232px"
+              w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
               color="#040D12"
               borderColor="#040D12"
               _hover={{ borderColor: "#93B1A6" }}
@@ -148,7 +155,7 @@ export default function account({ userData }: IUserProps) {
               id="last_name"
               value={user?.last_name}
               onChange={handleUserChange}
-              w="232px"
+              w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
               color="#040D12"
               borderColor="#040D12"
               _hover={{ borderColor: "#93B1A6" }}
@@ -161,7 +168,7 @@ export default function account({ userData }: IUserProps) {
               id="date_of_birth"
               value={user?.date_of_birth ? new Date(user.date_of_birth).toISOString().split("T")[0] : ""}
               onChange={handleUserChange}
-              w="232px"
+              w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
               type="date"
               color="#040D12"
               borderColor="#040D12"
@@ -172,9 +179,9 @@ export default function account({ userData }: IUserProps) {
         </Flex>
 
         <Text mt="16px">Gender</Text>
-        <Flex gap="32px" align="center" justify="center" textAlign="center">
+        <Flex gap={{ base: "8px", sm: "32px" }} align="center" justify="center" textAlign="center">
           <Box
-            w="232px"
+            w={{ base: "80px", lg: "232px" }}
             border={user?.gender == "male" ? "#183D3D 4px solid" : "#040D12 1px solid"}
             borderRadius="16px"
             color="#040D12"
@@ -186,7 +193,7 @@ export default function account({ userData }: IUserProps) {
           </Box>
 
           <Box
-            w="232px"
+            w={{ base: "80px", lg: "232px" }}
             border={user?.gender == "female" ? "#183D3D 4px solid" : "#040D12 1px solid"}
             borderRadius="16px"
             color="#040D12"
@@ -200,7 +207,7 @@ export default function account({ userData }: IUserProps) {
           <Flex
             direction="column"
             align="center"
-            w="232px"
+            w={{ base: "80px", lg: "232px" }}
             border={user?.gender == "other" ? "#183D3D 4px solid" : "#040D12 1px solid"}
             borderRadius="16px"
             color="#040D12"
@@ -213,7 +220,7 @@ export default function account({ userData }: IUserProps) {
           </Flex>
         </Flex>
 
-        <Flex mt="16px" justify="center" gap="32px" textAlign="center">
+        <Flex mt="16px" justify="center" gap="32px" textAlign="center" direction={{ base: "column", lg: "row" }}>
           <Box>
             <Text>Address</Text>
             <InputGroup>
@@ -226,7 +233,7 @@ export default function account({ userData }: IUserProps) {
                 id="address"
                 value={user?.address}
                 onChange={handleUserChange}
-                w="232px"
+                w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
                 color="#040D12"
                 borderColor="#040D12"
                 _hover={{ borderColor: "#93B1A6" }}
@@ -236,7 +243,11 @@ export default function account({ userData }: IUserProps) {
           </Box>
           <Box>
             <Text>Phone</Text>
-            <InputGroup w="232px" borderColor="#040D12" color="#040D12">
+            <InputGroup
+              w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
+              borderColor="#040D12"
+              color="#040D12"
+            >
               <InputLeftAddon bgColor="#5C8374">+385</InputLeftAddon>
               <Input
                 id="phone"
@@ -251,14 +262,14 @@ export default function account({ userData }: IUserProps) {
         </Flex>
 
         {userData?.role === "student" && (
-          <Flex mt="16px" justify="center" gap="32px" textAlign="center">
+          <Flex mt="16px" justify="center" gap="32px" textAlign="center" direction={{ base: "column", lg: "row" }}>
             <Box>
               <Text>School name</Text>
               <Input
                 id="school"
                 value={user?.school}
                 onChange={handleUserChange}
-                w="232px"
+                w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
                 color="#040D12"
                 borderColor="#040D12"
                 _hover={{ borderColor: "#93B1A6" }}
@@ -271,7 +282,7 @@ export default function account({ userData }: IUserProps) {
                 id="grade"
                 value={user?.grade}
                 onChange={handleUserChange}
-                w="232px"
+                w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
                 color="#040D12"
                 borderColor="#040D12"
                 _hover={{ borderColor: "#93B1A6" }}
@@ -301,12 +312,12 @@ export default function account({ userData }: IUserProps) {
         )}
         {userData?.role === "tutor" && (
           <>
-            <Flex mt="16px" justify="center" gap="32px" textAlign="center">
+            <Flex mt="16px" justify="center" gap="32px" textAlign="center" direction={{ base: "column", lg: "row" }}>
               <Box>
                 <Text>Educational attainment</Text>
                 <Select
                   id="educational_attainment"
-                  w="232px"
+                  w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
                   value={user?.educational_attainment}
                   onChange={handleUserChange}
                   color="#040D12"
@@ -327,7 +338,7 @@ export default function account({ userData }: IUserProps) {
                   id="finished_school"
                   value={user?.finished_school}
                   onChange={handleUserChange}
-                  w="232px"
+                  w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
                   color="#040D12"
                   borderColor="#040D12"
                   _hover={{ borderColor: "#93B1A6" }}
@@ -342,7 +353,7 @@ export default function account({ userData }: IUserProps) {
               value={user?.description}
               onChange={handleUserChange}
               placeholder="Say something about yourself..."
-              w="762px"
+              w={{ base: "232px", sm: "464px", md: "464px", lg: "762px" }}
               maxLength={300}
               color="#040D12"
               borderColor="#040D12"

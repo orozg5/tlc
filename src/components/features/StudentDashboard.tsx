@@ -47,7 +47,7 @@ export default function StudentDashboard({ userData }: IUserProps) {
   };
 
   return (
-    <Flex direction="column" p="32px" h="calc(100vh - 100px)" align="center" justify="center">
+    <Flex direction="column" p="32px" mt="48px" align="center" justify="center">
       <Heading>Welcome, {userData?.first_name}</Heading>
       <Text textAlign="center">
         This is your dedicated space to connect with your tutors and access valuable educational resources.{" "}
@@ -60,7 +60,7 @@ export default function StudentDashboard({ userData }: IUserProps) {
         borderRadius="16px"
         p="8px"
         bg="#93B1A6"
-        w="900px"
+        w={{base: "200px", sm: "432px", md: "664px", lg:"900px"}}
         h="300px"
         _hover={{ bgColor: "#5C8374" }}
         onClick={() => router.push("/instructions")}

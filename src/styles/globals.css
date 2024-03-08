@@ -14,18 +14,3 @@ body {
   overflow-x: hidden;
 }
 
-.animation {
-  position: relative;
-  animation: slidein 1s;
-}
-
-@keyframes slidein {
-  0% {
-    left: 800px;
-    top: 0px;
-  }
-  100% {
-    left: 0px;
-    top: 0px;
-  }
-}

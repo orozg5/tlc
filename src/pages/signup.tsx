@@ -89,7 +89,7 @@ export default function signup() {
   };
 
   return (
-    <Flex h="100vh" justify="center" align="center" direction="column" gap="64px">
+    <Flex mt="64px" justify="center" align="center" direction="column" gap="64px">
       <Box textAlign="center">
         <Link href="/">
           <Heading size="3xl">TLC</Heading>
@@ -113,8 +113,8 @@ export default function signup() {
       </Box>
 
       {!role && (
-        <Flex gap="32px">
-          <Card bgColor="#5C8374" maxW="sm">
+        <Flex gap="32px" direction={{base: "column", md: "row"}}>
+          <Card bgColor="#5C8374" w={{base:"xs", sm: "sm"}}>
             <CardBody>
               <Lottie options={studentOptions} height="200px" width="200px" />
               <Heading textAlign="center" mt="40px" size="xl">
@@ -148,7 +148,7 @@ export default function signup() {
             </CardFooter>
           </Card>
 
-          <Card bgColor="#FAE392" maxW="sm">
+          <Card bgColor="#FAE392" w={{base:"xs", sm: "sm"}}>
             <CardBody>
               <Lottie options={tutorOptions} height="240px" width="240px" />
               <Heading textAlign="center" size="xl">
@@ -185,7 +185,7 @@ export default function signup() {
       )}
 
       {role !== 0 && (
-        <Card bgColor={role === 1 ? "#5C8374" : "#FAE392"} w="sm">
+        <Card bgColor={role === 1 ? "#5C8374" : "#FAE392"} w={{base:"xs", sm: "sm"}}>
           <CardBody>
             <Lottie options={role === 1 ? studentOptions : tutorOptions} height="240px" width="240px" />
             <Text fontSize="18px" color={role === 1 ? "#eeeeee" : "#040D12"} mt="16px">

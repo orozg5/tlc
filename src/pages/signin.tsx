@@ -61,7 +61,7 @@ export default function signin() {
   };
 
   return (
-    <Flex h="100vh" justify="center" align="center" direction="column" gap="64px">
+    <Flex mt="64px" justify="center" align="center" direction="column" gap="64px">
       <Box textAlign="center">
         <Link href="/">
           <Heading size="3xl">TLC</Heading>
@@ -71,7 +71,7 @@ export default function signin() {
         </Heading>
       </Box>
 
-      <Card bgColor="#5C8374" w="sm">
+      <Card bgColor="#5C8374" w={{base:"xs", sm: "sm"}}>
         <CardBody>
           <Lottie options={eduOptions} height="232px" width="232px" />
           <Text fontSize="18px" color="#eeeeee" mt="16px">
