@@ -1,19 +1,17 @@
-import { GetServerSideProps } from "next";
-import IUserProps from "@/interfaces/IUserProps";
+import TutorInstructions from "@/components/features/Instructions/TutorInstructions";
 import RegHeader from "@/components/shared/RegHeader";
 import getCurrentUserInfo from "@/helpers/getCurrentUserInfo";
+import getCurrentUserInstructions from "@/helpers/getCurrentUserInstructions";
+import IUserProps from "@/interfaces/IUserProps";
 import { getMe } from "@/utils/getMe";
-import ProfileSetup from "@/components/features/ProfileSetup";
-import StudentDashboard from "@/components/features/Dashboard/StudentDashboard";
-import TutorDashboard from "@/components/features/Dashboard/TutorDashboard";
+import { GetServerSideProps } from "next";
+import React from "react";
 
-export default function home({ userData }: IUserProps) {
+export default function instructions({ userData, userInstructions }: IUserProps) {
   return (
     <>
-      {!userData?.first_name && <ProfileSetup userData={userData} />}
       <RegHeader userData={userData} />
-      {userData?.role == "student" && <StudentDashboard userData={userData} />}
-      {userData?.role == "tutor" && <TutorDashboard userData={userData} />}
+      {userData?.role == "tutor" && <TutorInstructions userData={userData} userInstructions={userInstructions} />}
     </>
   );
 }
@@ -31,10 +29,12 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
   }
 
   let userData = await getCurrentUserInfo(req);
+  let userInstructions = await getCurrentUserInstructions(req);
 
   return {
     props: {
       userData,
+      userInstructions,
     },
   };
 };

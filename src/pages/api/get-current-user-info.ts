@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       last_name: data.rows[0].last_name,  
       gender: data.rows[0].gender,
       date_of_birth: data.rows[0].date_of_birth,
-      address: data.rows[0].address,
+      city_id: data.rows[0].city_id,
       phone: data.rows[0].phone,
       profile_photo: data.rows[0].profile_photo,
       school: "",

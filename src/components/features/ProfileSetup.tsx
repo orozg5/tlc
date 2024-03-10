@@ -83,7 +83,7 @@ export default function ProfileSetup({ userData }: IUserProps) {
       !user?.last_name ||
       !user?.date_of_birth ||
       !user?.gender ||
-      (user.role == "tutor" && (!user.profile_photo || !user.phone))
+      (user.role == "tutor" && (!user.profile_photo || !user.phone || !user.city_id))
     ) {
       setError(true);
       return;
@@ -233,7 +233,7 @@ export default function ProfileSetup({ userData }: IUserProps) {
               </Flex>
 
               <Box mt="8px">
-                <Text textAlign="center">Address</Text>
+                <Text textAlign="center">City</Text>
                 <InputGroup>
                   <InputLeftElement>
                     <Button pl="14px" variant="unstyled">
@@ -241,8 +241,8 @@ export default function ProfileSetup({ userData }: IUserProps) {
                     </Button>
                   </InputLeftElement>
                   <Input
-                    id="address"
-                    value={user?.address}
+                    id="city_id"
+                    value={user?.city_id}
                     onChange={handleUserChange}
                     w="264px"
                     borderColor="#040D12"
@@ -362,7 +362,7 @@ export default function ProfileSetup({ userData }: IUserProps) {
             )}
             {error && user?.role == "tutor" && (
               <Text color="#B50711" textAlign="center" mt="16px">
-                First name, last name, date of birth, gender, profile photo and phone number is required.
+                First name, last name, date of birth, gender, profile photo, phone number and city is required.
               </Text>
             )}
           </ModalBody>

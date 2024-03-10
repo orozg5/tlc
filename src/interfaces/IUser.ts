@@ -11,7 +11,7 @@ export default interface IUser {
   educational_attainment?: string;
   finished_school?: string;
   description?: string;
-  address: string;
+  city_id: string;
   phone?: string;
   profile_photo?: string;
 }

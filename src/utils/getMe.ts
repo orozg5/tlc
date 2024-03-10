@@ -14,7 +14,7 @@ export async function getMe(req: any) {
       last_name: "",
       gender: "",
       date_of_birth: "",
-      address: "",
+      city_id: "",
       phone: "",
       profile_photo: "",
       educational_attainment: "",

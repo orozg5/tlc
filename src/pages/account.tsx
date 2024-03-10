@@ -222,7 +222,7 @@ export default function account({ userData }: IUserProps) {
 
         <Flex mt="16px" justify="center" gap="32px" textAlign="center" direction={{ base: "column", lg: "row" }}>
           <Box>
-            <Text>Address</Text>
+            <Text>City</Text>
             <InputGroup>
               <InputLeftElement>
                 <Button pl="14px" variant="unstyled">
@@ -230,8 +230,8 @@ export default function account({ userData }: IUserProps) {
                 </Button>
               </InputLeftElement>
               <Input
-                id="address"
-                value={user?.address}
+                id="city_id"
+                value={user?.city_id}
                 onChange={handleUserChange}
                 w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
                 color="#040D12"
