@@ -92,14 +92,9 @@ export default function Header({ userData }: IUserProps) {
                 Home
               </MenuItem>
             )}
-            <MenuItem>
-              <ScrollLink to="aboutus">About us</ScrollLink>
-            </MenuItem>
+            
             <MenuItem as="a" href="/forum">
               Forum
-            </MenuItem>
-            <MenuItem>
-              <ScrollLink to="contacts">Contacts</ScrollLink>
             </MenuItem>
             <MenuDivider />
             {!userData?.email && (

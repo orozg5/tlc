@@ -57,6 +57,7 @@ export default function StudentDashboard({ userData }: IUserProps) {
         mt="16px"
         textAlign="center"
         direction="column"
+        justify="center"
         borderRadius="16px"
         p="8px"
         bg="#93B1A6"
@@ -65,14 +66,14 @@ export default function StudentDashboard({ userData }: IUserProps) {
         _hover={{ bgColor: "#5C8374" }}
         onClick={() => router.push("/instructions")}
       >
-        <Lottie options={instructionsOptions} height="200px" width="348px" />
-        <Text color="#183D3D" fontSize="24px">
+        <Lottie options={instructionsOptions} height="auto" width="100%" style={{maxHeight: "200px", maxWidth: '348px' }} />
+        <Text color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>
           Discover a diverse range of tutors offering personalized lessons in various subjects, each committed to
           helping you succeed.
         </Text>
       </Flex>
 
-      <Flex mt="32px" gap="32px" wrap="wrap">
+      <Flex mt="32px" gap="32px" wrap="wrap" justify="center">
         <Flex
           textAlign="center"
           direction="column"
@@ -85,7 +86,7 @@ export default function StudentDashboard({ userData }: IUserProps) {
           onClick={() => router.push("/calendar")}
         >
           <Lottie options={calendarOptions} height="200px" width="200px" />
-          <Text color="#183D3D" fontSize="24px">
+          <Text mb={{base: "32px", sm: "0px"}}  color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>
             Check your calendar
           </Text>
         </Flex>
@@ -102,7 +103,7 @@ export default function StudentDashboard({ userData }: IUserProps) {
           onClick={() => router.push("/chat")}
         >
           <Lottie options={chatOptions} height="132px" width="132px" />
-          <Text color="#183D3D" fontSize="24px">
+          <Text color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>
             Chat with instructors
           </Text>
         </Flex>
@@ -119,7 +120,7 @@ export default function StudentDashboard({ userData }: IUserProps) {
           onClick={() => router.push("/forum")}
         >
           <Lottie options={forumOptions} height="132px" width="132px" />
-          <Text color="#183D3D" fontSize="24px">
+          <Text color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>
             Discuss topics on forum
           </Text>
         </Flex>

@@ -58,12 +58,13 @@ export default function TutorDashboard({ userData }: IUserProps) {
 
   return (
     <Flex direction="column" p="32px" mt="48px" align="center" justify="center">
-      <Heading>Welcome, {userData?.first_name}</Heading>
+      <Heading textAlign="center">Welcome, {userData?.first_name}</Heading>
       <Text textAlign="center">This is your space to craft and share instructional content with your students.</Text>
 
       <Flex
         mt="16px"
         textAlign="center"
+        justify="center"
         direction="column"
         borderRadius="16px"
         p="8px"
@@ -73,8 +74,8 @@ export default function TutorDashboard({ userData }: IUserProps) {
         _hover={{ bgColor: "#5C8374" }}
         onClick={() => router.push("/instructions")}
       >
-        <Lottie options={instructionsOptions} height="200px" width="348px" />
-        <Text color="#183D3D" fontSize="24px">
+        <Lottie options={instructionsOptions} height="auto" width="100%" style={{maxHeight: "200px", maxWidth: '348px' }} />
+        <Text mt="16px" color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>
           Start creating engaging lessons to help your students succeed on their learning journey.
         </Text>
       </Flex>
@@ -84,6 +85,7 @@ export default function TutorDashboard({ userData }: IUserProps) {
           textAlign="center"
           direction="column"
           borderRadius="16px"
+          justify="center"
           p="8px"
           bg="#93B1A6"
           w="200px"
@@ -92,13 +94,14 @@ export default function TutorDashboard({ userData }: IUserProps) {
           onClick={() => router.push("/materials")}
         >
           <Lottie options={uploadOptions} height="164px" width="164px" />
-          <Text color="#183D3D" fontSize="24px">Add a new material</Text>
+          <Text mb={{base: "16px", sm: "0px"}} color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>Add a new material</Text>
         </Flex>
 
         <Flex
           textAlign="center"
           direction="column"
           borderRadius="16px"
+          justify="center"
           p="8px"
           bg="#93B1A6"
           w="200px"
@@ -107,13 +110,14 @@ export default function TutorDashboard({ userData }: IUserProps) {
           onClick={() => router.push("/calendar")}
         >
           <Lottie options={calendarOptions} height="200px" width="200px" />
-          <Text color="#183D3D" fontSize="24px">Check your calendar</Text>
+          <Text mb={{base: "16px", sm: "0px"}} color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>Check your calendar</Text>
         </Flex>
 
         <Flex
           textAlign="center"
           direction="column"
           borderRadius="16px"
+          justify="center"
           p="8px"
           bg="#93B1A6"
           w="200px"
@@ -122,13 +126,14 @@ export default function TutorDashboard({ userData }: IUserProps) {
           onClick={() => router.push("/chat")}
         >
           <Lottie options={chatOptions} height="132px" width="132px" />
-          <Text color="#183D3D" fontSize="24px">Chat with students</Text>
+          <Text color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>Chat with students</Text>
         </Flex>
 
         <Flex
           textAlign="center"
           direction="column"
           borderRadius="16px"
+          justify="center"
           p="8px"
           bg="#93B1A6"
           w="200px"
@@ -137,7 +142,7 @@ export default function TutorDashboard({ userData }: IUserProps) {
           onClick={() => router.push("/forum")}
         >
           <Lottie options={forumOptions} height="132px" width="132px" />
-          <Text color="#183D3D" fontSize="24px">Discuss topics on forum</Text>
+          <Text color="#183D3D" fontSize={{base: "16px", sm: "24px"}}>Discuss topics on forum</Text>
         </Flex>
       </Flex>
     </Flex>

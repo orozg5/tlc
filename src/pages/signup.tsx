@@ -89,7 +89,7 @@ export default function signup() {
   };
 
   return (
-    <Flex mt="64px" justify="center" align="center" direction="column" gap="64px">
+    <Flex mt="64px" mb="64px" justify="center" align="center" direction="column" gap="64px">
       <Box textAlign="center">
         <Link href="/">
           <Heading size="3xl">TLC</Heading>

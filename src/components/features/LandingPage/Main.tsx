@@ -1,9 +1,9 @@
 import { Box, Flex, Heading, Show, Text } from "@chakra-ui/react";
-import Lottie from "react-lottie";
+import Lottie, { Options } from "react-lottie";
 import teach from "@/lotties/teach.json";
 
 export default function Main() {
-  const teachOptions = {
+  const teachOptions: Options = {
     loop: true,
     autoplay: true,
     animationData: teach,
@@ -16,9 +16,9 @@ export default function Main() {
     <Flex justify="center" align="center" h="calc(100vh - 100px)" bgColor="#040D12" p="16px">
       <Lottie
         options={teachOptions}
-        height="1000px"
-        width="1000px"
-        style={{ position: "absolute", cursor: "default", opacity: "0.5" }}
+        height="auto"
+        width="100%"
+        style={{ position: "absolute", cursor: "default", opacity: "0.5", maxWidth: '1000px' }}
       />
 
       <Box zIndex="1">
