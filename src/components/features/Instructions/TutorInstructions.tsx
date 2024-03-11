@@ -20,11 +20,12 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 
-export default function TutorInstructions({ userData, userInstructions }: IUserProps) {
+export default function TutorInstructions({ userData, userInstructions, subjects }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [instruction, setInstruction] = useState<IInstruction>({
     instructor_id: userData?.id,
   });
+  const [error, setError] = useState(false);
 
   const handleInstructionChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -34,6 +35,19 @@ export default function TutorInstructions({ userData, userInstructions }: IUserP
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    setError(false);
+    if (
+      !instruction.subject_id ||
+      !instruction.grade ||
+      !instruction.type ||
+      !instruction.description ||
+      !instruction.price
+    ) {
+      setError(true);
+      return;
+    }
+
     try {
       const res = await createInstruction(instruction);
       if (res.status === 200) {
@@ -66,11 +80,13 @@ export default function TutorInstructions({ userData, userInstructions }: IUserP
             bg="#93B1A6"
             color="#183D3D"
           >
-            <Heading>{i.subject_id}</Heading>
+            <Heading>{subjects?.find((subject) => subject.subject_id == i.subject_id)?.subject_name}</Heading>
             <Text mt="4px">
               {i.grade}, {i.type}
             </Text>
-            <Text mt="8px">{i.description}</Text>
+            <Text mt="8px" w={{ base: "264px", sm: "400px", md: "632px" }}>
+              {i.description}
+            </Text>
             <Text mt="8px" color="#FAE392">
               {i.price}€/h
             </Text>
@@ -86,6 +102,19 @@ export default function TutorInstructions({ userData, userInstructions }: IUserP
           <ModalBody>
             <Flex direction="column" align="center">
               <Text>Subject</Text>
+              <Select
+                id="subject_id"
+                onChange={handleInstructionChange}
+                w="264px"
+                borderColor="#040D12"
+                _hover={{ borderColor: "#5C8374" }}
+                focusBorderColor="#040D12"
+                placeholder="Select"
+              >
+                {subjects?.map((subject) => (
+                  <option value={subject.subject_id}>{subject.subject_name}</option>
+                ))}
+              </Select>
 
               <Text mt="16px">Grade</Text>
               <Select
@@ -125,6 +154,7 @@ export default function TutorInstructions({ userData, userInstructions }: IUserP
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
                 focusBorderColor="#040D12"
+                placeholder="Select"
               >
                 <option value="online">online</option>
                 <option value="irl">irl</option>
@@ -155,6 +185,12 @@ export default function TutorInstructions({ userData, userInstructions }: IUserP
                 focusBorderColor="#040D12"
               />
             </Flex>
+
+            {error && (
+              <Text textAlign="center" mt="16px" color="#B50711">
+                All fields are required.
+              </Text>
+            )}
           </ModalBody>
 
           <ModalFooter>

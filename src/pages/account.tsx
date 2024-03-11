@@ -25,8 +25,9 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import updateProfile from "@/helpers/updateProfile";
 import getCurrentUserInfo from "@/helpers/getCurrentUserInfo";
+import getCities from "@/helpers/getCities";
 
-export default function account({ userData }: IUserProps) {
+export default function account({ userData, cities }: IUserProps) {
   const router = useRouter();
   const [user, setUser] = useState(userData);
   const [profile, setProfile] = useState(userData?.profile_photo);
@@ -223,23 +224,21 @@ export default function account({ userData }: IUserProps) {
         <Flex mt="16px" justify="center" gap="32px" textAlign="center" direction={{ base: "column", lg: "row" }}>
           <Box>
             <Text>City</Text>
-            <InputGroup>
-              <InputLeftElement>
-                <Button pl="14px" variant="unstyled">
-                  <TbMap2 />
-                </Button>
-              </InputLeftElement>
-              <Input
-                id="city_id"
-                value={user?.city_id}
-                onChange={handleUserChange}
-                w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
-                color="#040D12"
-                borderColor="#040D12"
-                _hover={{ borderColor: "#93B1A6" }}
-                focusBorderColor="#040D12"
-              />
-            </InputGroup>
+            <Select
+              id="city_id"
+              onChange={handleUserChange}
+              w={{ base: "232px", sm: "464px", md: "464px", lg: "232px" }}
+              color="#040D12"
+              borderColor="#040D12"
+              _hover={{ borderColor: "#93B1A6" }}
+              focusBorderColor="#040D12"
+              placeholder="Select"
+              value={user?.city_id}
+            >
+              {cities?.map((city) => (
+                <option value={city.city_id}>{city.city_name}</option>
+              ))}
+            </Select>
           </Box>
           <Box>
             <Text>Phone</Text>
@@ -398,10 +397,12 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
   }
 
   let userData = await getCurrentUserInfo(req);
+  let cities = await getCities();
 
   return {
     props: {
       userData,
+      cities,
     },
   };
 };

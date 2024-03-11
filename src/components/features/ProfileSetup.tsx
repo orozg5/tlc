@@ -23,9 +23,8 @@ import React, { useRef, useState } from "react";
 import { FiUpload } from "react-icons/fi";
 import { GoTrash } from "react-icons/go";
 import { PiGenderFemale, PiGenderMale, PiGenderNeuterBold } from "react-icons/pi";
-import { TbMap2 } from "react-icons/tb";
 
-export default function ProfileSetup({ userData }: IUserProps) {
+export default function ProfileSetup({ userData, cities }: IUserProps) {
   const [user, setUser] = useState(userData);
   const [profile, setProfile] = useState(userData?.profile_photo);
   const [showButtons, setShowButtons] = useState(false);
@@ -232,25 +231,22 @@ export default function ProfileSetup({ userData }: IUserProps) {
                 </Flex>
               </Flex>
 
-              <Box mt="8px">
-                <Text textAlign="center">City</Text>
-                <InputGroup>
-                  <InputLeftElement>
-                    <Button pl="14px" variant="unstyled">
-                      <TbMap2 />
-                    </Button>
-                  </InputLeftElement>
-                  <Input
-                    id="city_id"
-                    value={user?.city_id}
-                    onChange={handleUserChange}
-                    w="264px"
-                    borderColor="#040D12"
-                    _hover={{ borderColor: "#5C8374" }}
-                    focusBorderColor="#040D12"
-                  />
-                </InputGroup>
-              </Box>
+              <Text mt="8px" textAlign="center">
+                City
+              </Text>
+              <Select
+                id="city_id"
+                onChange={handleUserChange}
+                w="264px"
+                borderColor="#040D12"
+                _hover={{ borderColor: "#5C8374" }}
+                focusBorderColor="#040D12"
+                placeholder="Select"
+              >
+                {cities?.map((city) => (
+                  <option value={city.city_id}>{city.city_name}</option>
+                ))}
+              </Select>
 
               <Text mt="8px">Phone</Text>
               <InputGroup w="264px" borderColor="#040D12">
