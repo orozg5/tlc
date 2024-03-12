@@ -7,6 +7,7 @@ const createInstruction = async (instruction: IInstruction) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
 
     return response;

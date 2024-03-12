@@ -7,7 +7,7 @@ const getCurrentUserInstructions = async (req: any) => {
         "Content-Type": "application/json",
         cookie: req.headers.cookie
       },
-      
+      withCredentials: true,
     });
 
     return response.data;

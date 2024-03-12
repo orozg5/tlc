@@ -12,14 +12,18 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
-  ModalHeader,
   ModalOverlay,
   Select,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
+import { FaGenderless } from "react-icons/fa";
+import { IoLocationOutline } from "react-icons/io5";
+import { LuCake } from "react-icons/lu";
+import { MdOutlineLocalPhone } from "react-icons/md";
+import { PiGraduationCap } from "react-icons/pi";
 
 export default function StudentInstructions({ userData, subjects, cities, allInstructions, instructors }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -297,7 +301,7 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
       </Flex>
 
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
+        <ModalOverlay bg="blackAlpha.800" />
         <ModalContent p="16px" color="#040D12" bg="#93B1A6" textAlign="center">
           <ModalCloseButton />
           <ModalBody>
@@ -307,13 +311,42 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
             <Text>
               {info.instructor?.first_name} {info.instructor?.last_name}
             </Text>
-            <Text>{info.instructor?.gender}</Text>
-            <Text>{info.instructor?.date_of_birth && (info.instructor?.date_of_birth).split("T")[0]}</Text>
-            <Text>{cities?.find((city) => city.city_id == info.instructor?.city_id)?.city_name}</Text>
-            <Text>+385 {info.instructor?.phone}</Text>
-            <Text>
-              {info.instructor?.finished_school}, {info.instructor?.educational_attainment} degree
-            </Text>
+
+            <Flex align="center" justify="center" gap="8px">
+              <Text>
+                {info.instructor?.gender == "female" ? (
+                  <BsGenderFemale />
+                ) : info.instructor?.gender == "male" ? (
+                  <BsGenderMale />
+                ) : (
+                  <FaGenderless />
+                )}
+              </Text>
+              <Text>{info.instructor?.gender}</Text>
+            </Flex>
+
+            <Flex align="center" justify="center" gap="8px">
+              <LuCake />
+              <Text>{info.instructor?.date_of_birth && (info.instructor?.date_of_birth).split("T")[0]}</Text>
+            </Flex>
+
+            <Flex align="center" justify="center" gap="8px">
+              <IoLocationOutline />
+              <Text>{cities?.find((city) => city.city_id == info.instructor?.city_id)?.city_name}</Text>
+            </Flex>
+
+            <Flex align="center" justify="center" gap="8px">
+              <MdOutlineLocalPhone />
+              <Text>+385 {info.instructor?.phone}</Text>
+            </Flex>
+
+            <Flex align="center" justify="center" gap="8px">
+              <PiGraduationCap />
+              <Text>
+                {info.instructor?.finished_school}, {info.instructor?.educational_attainment} degree
+              </Text>
+            </Flex>
+
             <Text mt="8px">{info.instructor?.description}</Text>
 
             <Heading mt="16px" size="lg">
@@ -322,18 +355,20 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
             <Text>{subjects?.find((subject) => subject.subject_id == info.instruction?.subject_id)?.subject_name}</Text>
             <Text>
               {info.instruction?.grade && info.instruction?.grade[0]}
-              {info.instruction?.grade && info.instruction?.grade[0] == "1"
-                ? "st"
-                : info.instruction?.grade && info.instruction?.grade[0] == "2"
-                ? "nd"
-                : info.instruction?.grade && info.instruction?.grade[0] == "3"
-                ? "rd"
-                : "th"}
-              {info.instruction?.grade && info.instruction?.grade[1] == "e"
-                ? ", elementry school"
-                : info.instruction?.grade && info.instruction?.grade[1] == "h"
-                ? "high school"
-                : "university"}
+              {info.instruction?.grade &&
+                (info.instruction?.grade[0] == "1"
+                  ? "st"
+                  : info.instruction?.grade[0] == "2"
+                  ? "nd"
+                  : info.instruction?.grade[0] == "3"
+                  ? "rd"
+                  : "th")}
+              {info.instruction?.grade &&
+                (info.instruction?.grade[1] == "e"
+                  ? ", elementry school"
+                  : info.instruction?.grade[1] == "h"
+                  ? ", high school"
+                  : ", university")}
             </Text>
             <Text>{info.instruction?.type}</Text>
             <Text>{info.instruction?.price} €/h</Text>

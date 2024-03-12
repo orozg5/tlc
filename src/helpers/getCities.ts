@@ -6,6 +6,7 @@ const getCities = async () => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
 
     return response.data;

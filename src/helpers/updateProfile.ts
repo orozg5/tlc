@@ -7,6 +7,7 @@ const updateProfile = async (user: IUser) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
 
     return response;
