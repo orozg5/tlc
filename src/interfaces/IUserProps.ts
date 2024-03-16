@@ -1,3 +1,4 @@
+import IAvailability from "./IAvailability";
 import ICity from "./ICity";
 import IInstruction from "./IInstruction";
 import IInstructor from "./IInstructor";
@@ -11,4 +12,5 @@ export default interface IUserProps {
   subjects?: ISubject[];
   allInstructions?: IInstruction[];
   instructors?: IInstructor[];
+  myAvailability: IAvailability[];
 }
