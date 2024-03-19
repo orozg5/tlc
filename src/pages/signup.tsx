@@ -155,7 +155,7 @@ export default function signup() {
                 Tutor
               </Heading>
               <Text mt="16px" textAlign="center">
-                Showcase your expertise and connect with students. Share your methods, set availability, and help
+                Showcase your expertise and connect with students. Share your methods, set terms, and help
                 students excel while growing your business.
               </Text>
             </CardBody>

@@ -5,11 +5,11 @@ import { convertDateTime } from "@/utils/convertDateTime";
 
 /**
  * @swagger
- * /api/add-availability:
+ * /api/add-term:
  *   post:
  *     responses:
  *       200:
- *         description: Availability added successfully.
+ *         description: Term added successfully.
  *       500:
  *         description: Internal server error.
  */
@@ -42,12 +42,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     for (const d of dates) {
       await query(
-        `INSERT INTO availability (instructor_id, start, duration_min, description) VALUES ($1, $2, $3, $4)`,
+        `INSERT INTO terms (instructor_id, start, duration_min, description) VALUES ($1, $2, $3, $4)`,
         [instructor_id, d, duration_min, description]
       );
     }
 
-    res.status(200).json({ message: "Availability added successfully." });
+    res.status(200).json({ message: "Term added successfully." });
   } catch (error) {
     res.status(500).json({ message: "Internal server error." });
   }

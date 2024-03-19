@@ -1,9 +1,10 @@
-import IAvailability from "./IAvailability";
 import ICity from "./ICity";
 import IInstruction from "./IInstruction";
 import IInstructor from "./IInstructor";
 import ISubject from "./ISubject";
 import IUser from "./IUser";
+import ITerm from "./ITerm";
+import IStudent from "./IStudent";
 
 export default interface IUserProps {
   userData?: IUser;
@@ -12,5 +13,7 @@ export default interface IUserProps {
   subjects?: ISubject[];
   allInstructions?: IInstruction[];
   instructors?: IInstructor[];
-  myAvailability: IAvailability[];
+  myTerms?: ITerm[];
+  students?: IStudent[];
+  terms?: ITerm[];
 }

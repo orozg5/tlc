@@ -1,11 +1,13 @@
 import IInfo from "@/interfaces/IInfo";
 import IUserProps from "@/interfaces/IUserProps";
+import { StyleWrapper } from "@/styles/calendar";
 import {
   Avatar,
   Box,
   Button,
   Flex,
   Heading,
+  Hide,
   Image,
   Input,
   Modal,
@@ -14,19 +16,40 @@ import {
   ModalContent,
   ModalOverlay,
   Select,
+  Show,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import FullCalendar from "@fullcalendar/react";
+import React, { useEffect, useState } from "react";
 import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
 import { FaGenderless } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
 import { LuCake } from "react-icons/lu";
 import { MdOutlineLocalPhone } from "react-icons/md";
 import { PiGraduationCap } from "react-icons/pi";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
+import ITerm from "@/interfaces/ITerm";
+import getTutorTerms from "@/helpers/getTutorTerms";
+import { convertDateTime } from "@/utils/convertDateTime";
+import reserveTerm from "@/helpers/reserveTerm";
+import termConvertor from "@/utils/termConvertor";
 
-export default function StudentInstructions({ userData, subjects, cities, allInstructions, instructors }: IUserProps) {
+export default function StudentInstructions({
+  userData,
+  subjects,
+  cities,
+  allInstructions,
+  instructors,
+  terms,
+}: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
+  const [events, setEvents] = useState<{ start: string; end: string }[]>([]);
+  const [theTerms, setTheTerms] = useState<ITerm[]>();
   const [filter, setFilter] = useState({
     subject_id: "",
     grade: "",
@@ -34,11 +57,37 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
     price: "",
     city_id: "",
     instructor_id: "",
+    calendar: "",
   });
   const [info, setInfo] = useState<IInfo>({
     instructor: {},
     instruction: {},
   });
+
+  useEffect(() => {
+    if (theTerms) {
+      const theEvents = theTerms?.map((t) => {
+        let endDate = new Date(t.start);
+        const start = convertDateTime(new Date(t.start));
+        endDate.setMinutes(endDate.getMinutes() + t.duration_min);
+        const end = convertDateTime(endDate);
+
+        return { id: t.term_id, start: start, end: end };
+      });
+      setEvents(theEvents);
+    }
+  }, [theTerms]);
+
+  const getTutorCalendar = async () => {
+    try {
+      if (info.instructor.user_id) {
+        const res = await getTutorTerms(info.instructor.user_id);
+        if (res.status === 200) {
+          setTheTerms(res.data);
+        }
+      }
+    } catch (error) {}
+  };
 
   const handleChangeFilter = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilter({ ...filter, [e.target.id]: e.target.value });
@@ -52,8 +101,46 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
       price: "",
       city_id: "",
       instructor_id: "",
+      calendar: "",
     });
   };
+
+  const handleEventClick = async (eventClickInfo: any) => {
+    const term = termConvertor(eventClickInfo);
+    const confirmed = confirm(`Are you sure you want to reserve this term (${term})?`);
+    if (confirmed) {
+      try {
+        if (eventClickInfo.event.id && info.instructor.user_id && userData?.id && info.instruction.instruction_id) {
+          const data = {
+            term_id: eventClickInfo.event.id,
+            instructor_id: info.instructor.user_id,
+            student_id: userData?.id,
+            instruction_id: info.instruction.instruction_id,
+            reserved: true,
+          };
+          const res = await reserveTerm(data);
+          if (res.status === 200) {
+            getTutorCalendar();
+          }
+        }
+      } catch (error) {}
+    }
+  };
+
+  function renderEventContent(eventInfo: any) {
+    return (
+      <div onClick={() => handleEventClick(eventInfo)}>
+        <Hide below="md">
+          <Text>{eventInfo.timeText}</Text>
+        </Hide>
+        <Show below="md">
+          <Text>{eventInfo.timeText.split(" ")[0]}</Text>
+        </Show>
+      </div>
+    );
+  }
+
+  console.log(terms);
 
   return (
     <Flex direction="column" align="center" justify="center" mt="64px" mb="64px">
@@ -211,12 +298,28 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
           </Box>
         </Flex>
 
+        <Flex mt="16px" direction="column" align="center" w={{ base: "264px", md: "232px" }}>
+          <Text>Date</Text>
+          <Input
+            bg="#93B1A6"
+            color="#040D12"
+            id="calendar"
+            value={filter.calendar}
+            onChange={handleChangeFilter}
+            borderColor="#040D12"
+            _hover={{ borderColor: "#5C8374" }}
+            focusBorderColor="#040D12"
+            type="date"
+          />
+        </Flex>
+
         {(filter.subject_id ||
           filter.city_id ||
           filter.grade ||
           filter.instructor_id ||
           filter.price ||
-          filter.type) && (
+          filter.type ||
+          filter.calendar) && (
           <Button
             onClick={clearFilter}
             bg="#183D3D"
@@ -241,7 +344,13 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
               (filter.city_id === "" ||
                 instructors?.find((instructor) => instructor.user_id === i.instructor_id)?.city_id ===
                   filter.city_id) &&
-              (filter.instructor_id === "" || i.instructor_id === filter.instructor_id)
+              (filter.instructor_id === "" || i.instructor_id === filter.instructor_id) &&
+              (filter.calendar === "" ||
+                terms?.find((t) => {
+                  new Date(t.start.split("T")[0]) == new Date(filter.calendar) &&
+                    !t.reserved &&
+                    i.instructor_id == t.instructor_id;
+                }))
           )
           .map((instruction) => (
             <Flex
@@ -390,9 +499,42 @@ export default function StudentInstructions({ userData, subjects, cities, allIns
               color="#eeeeee"
               fontWeight="50px"
               _hover={{ bg: "#5C8374", color: "#040D12" }}
+              onClick={() => {
+                getTutorCalendar();
+                onOpenCalendar();
+              }}
             >
               Calendar
             </Button>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={{ base: "md", md: "xl" }}>
+        <ModalOverlay bg="blackAlpha.700" />
+        <ModalContent color="#040D12" bg="#93B1A6">
+          <ModalCloseButton />
+          <ModalBody>
+            <StyleWrapper>
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+                initialView="timeGridWeek"
+                headerToolbar={{ left: "prev,today,next", right: "title" }}
+                footerToolbar={{ left: "dayGridMonth,timeGridWeek,timeGridDay,listWeek" }}
+                eventTimeFormat={{ hour: "numeric", minute: "2-digit", hour12: false }}
+                slotLabelFormat={{ hour: "numeric", minute: "2-digit", hour12: false }}
+                slotMinTime={"07:00:00"}
+                slotMaxTime={"22:00:00"}
+                timeZone="Europe/Zagreb"
+                firstDay={1}
+                allDaySlot={false}
+                eventContent={renderEventContent}
+                events={events}
+                eventClick={handleEventClick}
+                eventTextColor="#eeeeee"
+                eventBackgroundColor="#183d3d"
+              />
+            </StyleWrapper>
           </ModalBody>
         </ModalContent>
       </Modal>

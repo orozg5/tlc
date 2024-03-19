@@ -7,6 +7,7 @@ import getCurrentUserInfo from "@/helpers/getCurrentUserInfo";
 import getCurrentUserInstructions from "@/helpers/getCurrentUserInstructions";
 import getInstructors from "@/helpers/getInstructors";
 import getSubjects from "@/helpers/getSubjects";
+import getTerms from "@/helpers/getTerms";
 import IUserProps from "@/interfaces/IUserProps";
 import { getMe } from "@/utils/getMe";
 import { GetServerSideProps } from "next";
@@ -19,6 +20,7 @@ export default function instructions({
   cities,
   allInstructions,
   instructors,
+  terms
 }: IUserProps) {
   return (
     <>
@@ -33,6 +35,7 @@ export default function instructions({
           cities={cities}
           allInstructions={allInstructions}
           instructors={instructors}
+          terms={terms}
         />
       )}
     </>
@@ -51,12 +54,13 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
     };
   }
 
-  let userData = await getCurrentUserInfo(req);
-  let userInstructions = await getCurrentUserInstructions(req);
-  let subjects = await getSubjects();
-  let cities = await getCities();
-  let allInstructions = await getAllInstructions();
-  let instructors = await getInstructors();
+  const userData = await getCurrentUserInfo(req);
+  const userInstructions = await getCurrentUserInstructions(req);
+  const subjects = await getSubjects();
+  const cities = await getCities();
+  const allInstructions = await getAllInstructions();
+  const instructors = await getInstructors();
+  const terms = await getTerms();
 
   return {
     props: {
@@ -66,6 +70,7 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
       cities,
       allInstructions,
       instructors,
+      terms,
     },
   };
 };

@@ -1,6 +1,6 @@
 import axiosInstance from "axios";
 
-const addAvailability = async (availability: {
+const addTerm = async (term: {
   instructor_id: string;
   date: string;
   duration_h: number;
@@ -9,7 +9,7 @@ const addAvailability = async (availability: {
   repeat: string;
 }) => {
   try {
-    const response = await axiosInstance.post("/api/add-availability", availability, {
+    const response = await axiosInstance.post("/api/add-term", term, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -22,4 +22,4 @@ const addAvailability = async (availability: {
   }
 };
 
-export default addAvailability;
+export default addTerm;

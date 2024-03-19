@@ -32,10 +32,6 @@ export const StyleWrapper = styled.div`
   .fc-timegrid-event .fc-event-main {
     padding: 2px;
   }
-  .fc-v-event .fc-event-main {
-    color: #eeeeee;
-    background: #183d3d;
-  }
   .fc-event-main > b {
     font-weight: lighter;
   }

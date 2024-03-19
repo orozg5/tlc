@@ -1,8 +1,8 @@
 import axiosInstance from "axios";
 
-const getCurrentUserAvailability = async (req: any) => {
+const getCurrentUserTerms = async (req: any) => {
   try {
-    const response = await axiosInstance.get("http://localhost:3000/api/get-current-user-availability", {
+    const response = await axiosInstance.get("http://localhost:3000/api/get-current-user-terms", {
       headers: {
         "Content-Type": "application/json",
         cookie: req.headers.cookie
@@ -16,4 +16,4 @@ const getCurrentUserAvailability = async (req: any) => {
   }
 };
 
-export default getCurrentUserAvailability;
+export default getCurrentUserTerms;

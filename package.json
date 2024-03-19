@@ -26,6 +26,7 @@
     "dotenv": "^16.4.5",
     "framer-motion": "^11.0.8",
     "jose": "^5.2.2",
+    "moment-timezone": "^0.5.45",
     "next": "14.1.0",
     "next-swagger-doc": "^0.4.0",
     "node-mailjet": "^6.0.5",
