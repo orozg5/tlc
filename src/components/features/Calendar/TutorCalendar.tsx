@@ -31,6 +31,7 @@ import IUserProps from "@/interfaces/IUserProps";
 import termConvertor from "@/utils/termConvertor";
 import { headerToolbarConst } from "@/consts/headerToolbarConst";
 import { footerToolbarConst } from "@/consts/footerToolbarConst";
+import deleteTerm from "@/helpers/deleteTerm";
 
 interface IEvent {
   id: string;
@@ -141,8 +142,8 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     setTerm({ ...term, date: convertDateTime(datetime) });
   };
 
-  const handleEventClick = (eventClickInfo: any) => {
-    const term = termConvertor(eventClickInfo);
+  const handleEventClick = async (eventClickInfo: any) => {
+    const termDate = termConvertor(eventClickInfo);
 
     let student_id = "";
     let instruction_id = "";
@@ -170,7 +171,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
 
     setEventInfo({
       ...eventInfo,
-      term: term,
+      term: termDate,
       subject_name: subject_name,
       student_name: student_name,
       description: description,
@@ -178,6 +179,16 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
 
     if (subject_name && student_name) {
       onOpenEvent();
+    } else {
+      const confirmed = confirm(`Are you sure you want to delete this term (${termDate})?`);
+      if (confirmed && termDate) {
+        try {
+          const res = await deleteTerm(eventClickInfo.event.id);
+          if (res.status === 200) {
+            window.location.reload();
+          }
+        } catch (error) {}
+      }
     }
   };
 
@@ -349,7 +360,9 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
             <ModalHeader>{eventInfo.term}</ModalHeader>
             <Text mt="8px">Subject: {eventInfo.subject_name}</Text>
             <Text mt="8px">Student: {eventInfo.student_name}</Text>
-            <Text mt="8px" mb="8px">{eventInfo.description}</Text>
+            <Text mt="8px" mb="8px">
+              {eventInfo.description}
+            </Text>
           </ModalBody>
         </ModalContent>
       </Modal>

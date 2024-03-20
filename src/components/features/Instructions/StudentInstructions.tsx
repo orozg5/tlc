@@ -140,8 +140,6 @@ export default function StudentInstructions({
     );
   }
 
-  console.log(terms);
-
   return (
     <Flex direction="column" align="center" justify="center" mt="64px" mb="64px">
       <>
@@ -346,11 +344,13 @@ export default function StudentInstructions({
                   filter.city_id) &&
               (filter.instructor_id === "" || i.instructor_id === filter.instructor_id) &&
               (filter.calendar === "" ||
-                terms?.find((t) => {
-                  new Date(t.start.split("T")[0]) == new Date(filter.calendar) &&
+                terms?.find(
+                  (t) =>
+                    t.instructor_id == i.instructor_id &&
                     !t.reserved &&
-                    i.instructor_id == t.instructor_id;
-                }))
+                    new Date(t.start.split("T")[0]).toLocaleDateString() ==
+                      new Date(filter.calendar).toLocaleDateString()
+                ))
           )
           .map((instruction) => (
             <Flex
