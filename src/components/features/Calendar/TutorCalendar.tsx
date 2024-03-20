@@ -32,6 +32,8 @@ import termConvertor from "@/utils/termConvertor";
 import { headerToolbarConst } from "@/consts/headerToolbarConst";
 import { footerToolbarConst } from "@/consts/footerToolbarConst";
 import deleteTerm from "@/helpers/deleteTerm";
+import { getTimeDifference } from "@/utils/getTimeDifference";
+import cancelTerm from "@/helpers/cancelTerm";
 
 interface IEvent {
   id: string;
@@ -47,6 +49,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [events, setEvents] = useState<IEvent[]>([]);
   const [eventInfo, setEventInfo] = useState({
+    id: "",
     term: "",
     subject_name: "",
     student_name: "",
@@ -143,6 +146,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
   };
 
   const handleEventClick = async (eventClickInfo: any) => {
+    const id = eventClickInfo.event.id;
     const termDate = termConvertor(eventClickInfo);
 
     let student_id = "";
@@ -171,6 +175,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
 
     setEventInfo({
       ...eventInfo,
+      id: id,
       term: termDate,
       subject_name: subject_name,
       student_name: student_name,
@@ -212,7 +217,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
 
   function renderEventContent(eventInfo: any) {
     return (
-      <div onClick={() => handleEventClick(eventInfo)}>
+      <div>
         <Hide below="md">
           <Text>{eventInfo?.timeText}</Text>
           <Text>{eventInfo?.event?.title}</Text>
@@ -223,6 +228,24 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
       </div>
     );
   }
+
+  const handleCancel = async () => {
+    const r = getTimeDifference(eventInfo.term);
+
+    if (r) {
+      const confirmed = confirm(`Are you sure you want to cancel this term (${eventInfo.term})?`);
+      if (confirmed) {
+        try {
+          const res = await cancelTerm(eventInfo.id);
+          if (res.status === 200) {
+            window.location.reload();
+          }
+        } catch (error) {}
+      }
+    } else {
+      alert("Cancellation of the term is possible up to 12 hours before its scheduled start time.");
+    }
+  };
 
   return (
     <Flex justify="center" p={{ base: "8px", md: "64px" }}>
@@ -360,9 +383,18 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
             <ModalHeader>{eventInfo.term}</ModalHeader>
             <Text mt="8px">Subject: {eventInfo.subject_name}</Text>
             <Text mt="8px">Student: {eventInfo.student_name}</Text>
-            <Text mt="8px" mb="8px">
+            <Text mt="8px" mb="16px">
               {eventInfo.description}
             </Text>
+            <Button
+              onClick={handleCancel}
+              mb="16px"
+              bgColor="#183D3D"
+              color="#eeeeee"
+              _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+            >
+              Cancel
+            </Button>
           </ModalBody>
         </ModalContent>
       </Modal>

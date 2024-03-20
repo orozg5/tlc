@@ -2,6 +2,7 @@ import IUserProps from "@/interfaces/IUserProps";
 import { StyleWrapper } from "@/styles/calendar";
 import {
   Box,
+  Button,
   Flex,
   Hide,
   Modal,
@@ -25,11 +26,14 @@ import { convertDateTime } from "@/utils/convertDateTime";
 import termConvertor from "@/utils/termConvertor";
 import { headerToolbarConst } from "@/consts/headerToolbarConst";
 import { footerToolbarConst } from "@/consts/footerToolbarConst";
+import cancelTerm from "@/helpers/cancelTerm";
+import { getTimeDifference } from "@/utils/getTimeDifference";
 
 export default function StudentCalendar({ subjects, myTerms, allInstructions, instructors }: IUserProps) {
   const { isOpen: isOpenEvent, onOpen: onOpenEvent, onClose: onCloseEvent } = useDisclosure();
   const [events, setEvents] = useState<{ id: string; title: string; start: string; end: string }[]>([]);
   const [eventInfo, setEventInfo] = useState({
+    id: "",
     term: "",
     subject_name: "",
     instructor_name: "",
@@ -57,6 +61,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
   }, []);
 
   const handleEventClick = (eventClickInfo: any) => {
+    const id = eventClickInfo.event.id;
     const term = termConvertor(eventClickInfo);
 
     let instructor_id = "";
@@ -85,6 +90,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
 
     setEventInfo({
       ...eventInfo,
+      id: id,
       term: term,
       subject_name: subject_name,
       instructor_name: instructor_name,
@@ -98,7 +104,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
 
   const renderEventContent = (eventInfo: any) => {
     return (
-      <div onClick={() => handleEventClick(eventInfo)}>
+      <div>
         <Hide below="md">
           <Text>{eventInfo.timeText}</Text>
           <Text>{eventInfo.event.title}</Text>
@@ -108,6 +114,24 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
         </Show>
       </div>
     );
+  };
+
+  const handleCancel = async () => {
+    const r = getTimeDifference(eventInfo.term);
+
+    if (r) {
+      const confirmed = confirm(`Are you sure you want to cancel this term (${eventInfo.term})?`);
+      if (confirmed) {
+        try {
+          const res = await cancelTerm(eventInfo.id);
+          if (res.status === 200) {
+            window.location.reload();
+          }
+        } catch (error) {}
+      }
+    } else {
+      alert("Cancellation of the term is possible up to 12 hours before its scheduled start time.");
+    }
   };
 
   return (
@@ -126,8 +150,9 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
             timeZone="Europe/Zagreb"
             firstDay={1}
             allDaySlot={false}
-            eventContent={renderEventContent}
             events={events}
+            eventContent={renderEventContent}
+            eventClick={handleEventClick}
             eventTextColor="#eeeeee"
             eventBackgroundColor="#183d3d"
           />
@@ -142,7 +167,18 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
             <ModalHeader>{eventInfo.term}</ModalHeader>
             <Text mt="8px">Subject: {eventInfo.subject_name}</Text>
             <Text mt="8px">Student: {eventInfo.instructor_name}</Text>
-            <Text mt="8px" mb="8px">{eventInfo.description}</Text>
+            <Text mt="8px" mb="16px">
+              {eventInfo.description}
+            </Text>
+            <Button
+              onClick={handleCancel}
+              mb="16px"
+              bgColor="#183D3D"
+              color="#eeeeee"
+              _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+            >
+              Cancel
+            </Button>
           </ModalBody>
         </ModalContent>
       </Modal>
