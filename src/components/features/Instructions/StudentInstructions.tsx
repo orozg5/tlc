@@ -2,6 +2,12 @@ import IInfo from "@/interfaces/IInfo";
 import IUserProps from "@/interfaces/IUserProps";
 import { StyleWrapper } from "@/styles/calendar";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Avatar,
   Box,
   Button,
@@ -21,7 +27,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import FullCalendar from "@fullcalendar/react";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
 import { FaGenderless } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
@@ -48,6 +54,10 @@ export default function StudentInstructions({
 }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
+  const { isOpen: isOpenReserve, onOpen: onOpenReserve, onClose: onCloseReserve } = useDisclosure();
+  const cancelRef = useRef(null);
+
+  const [reserve, setReserve] = useState({term: "", id: ""});
   const [events, setEvents] = useState<{ start: string; end: string }[]>([]);
   const [theTerms, setTheTerms] = useState<ITerm[]>();
   const [filter, setFilter] = useState({
@@ -107,24 +117,8 @@ export default function StudentInstructions({
 
   const handleEventClick = async (eventClickInfo: any) => {
     const term = termConvertor(eventClickInfo);
-    const confirmed = confirm(`Are you sure you want to reserve this term (${term})?`);
-    if (confirmed) {
-      try {
-        if (eventClickInfo.event.id && info.instructor.user_id && userData?.id && info.instruction.instruction_id) {
-          const data = {
-            term_id: eventClickInfo.event.id,
-            instructor_id: info.instructor.user_id,
-            student_id: userData?.id,
-            instruction_id: info.instruction.instruction_id,
-            reserved: true,
-          };
-          const res = await reserveTerm(data);
-          if (res.status === 200) {
-            getTutorCalendar();
-          }
-        }
-      } catch (error) {}
-    }
+    setReserve({term: term, id: eventClickInfo.event.id});
+    onOpenReserve();
   };
 
   function renderEventContent(eventInfo: any) {
@@ -138,6 +132,25 @@ export default function StudentInstructions({
         </Show>
       </div>
     );
+  }
+
+  const confirmReserve = async() => {
+    try {
+      if (reserve.id && info.instructor.user_id && userData?.id && info.instruction.instruction_id) {
+        const data = {
+          term_id: reserve.id,
+          instructor_id: info.instructor.user_id,
+          student_id: userData?.id,
+          instruction_id: info.instruction.instruction_id,
+          reserved: true,
+        };
+        const res = await reserveTerm(data);
+        if (res.status === 200) {
+          getTutorCalendar();
+          onCloseReserve();
+        }
+      }
+    } catch (error) {}
   }
 
   return (
@@ -538,6 +551,46 @@ export default function StudentInstructions({
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      <AlertDialog isOpen={isOpenReserve} leastDestructiveRef={cancelRef} onClose={onCloseReserve}>
+        <AlertDialogOverlay bg="blackAlpha.600">
+          <AlertDialogContent textAlign="center" color="#040D12" bg="#93B1A6">
+            <AlertDialogHeader mt="8px" fontSize="lg" fontWeight="bold">
+              Reserve Instruction
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text>Are you sure you want to reserve this term?</Text>
+              <Text>{reserve.term}</Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter justifyContent="center">
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                ref={cancelRef}
+                onClick={onCloseReserve}
+              >
+                No
+              </Button>
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#F1C93B"
+                _hover={{ bgColor: "#FAE392", color: "#183D3D" }}
+                color="#040D12"
+                ml={3}
+                onClick={confirmReserve}
+              >
+                Yes
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Flex>
   );
 }

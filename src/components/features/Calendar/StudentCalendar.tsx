@@ -1,6 +1,12 @@
 import IUserProps from "@/interfaces/IUserProps";
 import { StyleWrapper } from "@/styles/calendar";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
   Button,
   Flex,
@@ -21,7 +27,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { convertDateTime } from "@/utils/convertDateTime";
 import termConvertor from "@/utils/termConvertor";
 import { headerToolbarConst } from "@/consts/headerToolbarConst";
@@ -31,6 +37,11 @@ import { getTimeDifference } from "@/utils/getTimeDifference";
 
 export default function StudentCalendar({ subjects, myTerms, allInstructions, instructors }: IUserProps) {
   const { isOpen: isOpenEvent, onOpen: onOpenEvent, onClose: onCloseEvent } = useDisclosure();
+  const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef(null);
+  const cancel2Ref = useRef(null);
+
   const [events, setEvents] = useState<{ id: string; title: string; start: string; end: string }[]>([]);
   const [eventInfo, setEventInfo] = useState({
     id: "",
@@ -120,18 +131,19 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
     const r = getTimeDifference(eventInfo.term);
 
     if (r) {
-      const confirmed = confirm(`Are you sure you want to cancel this term (${eventInfo.term})?`);
-      if (confirmed) {
-        try {
-          const res = await cancelTerm(eventInfo.id);
-          if (res.status === 200) {
-            window.location.reload();
-          }
-        } catch (error) {}
-      }
+      onOpen();
     } else {
-      alert("Cancellation of the term is possible up to 12 hours before its scheduled start time.");
+      onOpenAlert();
     }
+  };
+
+  const confirm = async () => {
+    try {
+      const res = await cancelTerm(eventInfo.id);
+      if (res.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {}
   };
 
   return (
@@ -166,7 +178,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
           <ModalBody textAlign="center">
             <ModalHeader>{eventInfo.term}</ModalHeader>
             <Text mt="8px">Subject: {eventInfo.subject_name}</Text>
-            <Text mt="8px">Student: {eventInfo.instructor_name}</Text>
+            <Text mt="8px">Tutor: {eventInfo.instructor_name}</Text>
             <Text mt="8px" mb="16px">
               {eventInfo.description}
             </Text>
@@ -182,6 +194,76 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+        <AlertDialogOverlay bg="blackAlpha.600">
+          <AlertDialogContent textAlign="center" color="#040D12" bg="#93B1A6">
+            <AlertDialogHeader mt="8px" fontSize="lg" fontWeight="bold">
+              Cancel Term
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text mt="8px">Are you sure you want to cancel this term?</Text>
+              <Text mt="8px">{eventInfo.term}</Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter justifyContent="center">
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                ref={cancelRef}
+                onClick={onClose}
+              >
+                No
+              </Button>
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#F1C93B"
+                _hover={{ bgColor: "#FAE392", color: "#183D3D" }}
+                color="#040D12"
+                onClick={confirm}
+                ml={3}
+              >
+                Yes
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      <AlertDialog isOpen={isOpenAlert} leastDestructiveRef={cancel2Ref} onClose={onCloseAlert}>
+        <AlertDialogOverlay bg="blackAlpha.600">
+          <AlertDialogContent textAlign="center" color="#040D12" bg="#93B1A6">
+            <AlertDialogHeader mt="8px" fontSize="lg" fontWeight="bold">
+              Cancel Term
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text>
+                Cancellation of the term is possible up to 12 hours before its scheduled start time.
+              </Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter justifyContent="center">
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                ref={cancel2Ref}
+                onClick={onCloseAlert}
+              >
+                Ok
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Flex>
   );
 }

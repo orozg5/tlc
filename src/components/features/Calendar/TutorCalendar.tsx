@@ -4,6 +4,12 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
   Button,
   Flex,
@@ -24,7 +30,7 @@ import {
 } from "@chakra-ui/react";
 import { StyleWrapper } from "@/styles/calendar";
 import { useBreakpointValue } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import addTerm from "@/helpers/addTerm";
 import { convertDateTime } from "@/utils/convertDateTime";
 import IUserProps from "@/interfaces/IUserProps";
@@ -47,6 +53,13 @@ interface IEvent {
 export default function TutorCalendar({ userData, myTerms, subjects, allInstructions, students }: IUserProps) {
   const { isOpen: isOpenEvent, onOpen: onOpenEvent, onClose: onCloseEvent } = useDisclosure();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenAlert, onOpen: onOpenAlert, onClose: onCloseAlert } = useDisclosure();
+  const { isOpen: isOpenConfirm, onOpen: onOpenConfirm, onClose: onCloseConfirm } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const cancelRef = useRef(null);
+  const cancel2Ref = useRef(null);
+  const cancel3Ref = useRef(null);
+
   const [events, setEvents] = useState<IEvent[]>([]);
   const [eventInfo, setEventInfo] = useState({
     id: "",
@@ -185,15 +198,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     if (subject_name && student_name) {
       onOpenEvent();
     } else {
-      const confirmed = confirm(`Are you sure you want to delete this term (${termDate})?`);
-      if (confirmed && termDate) {
-        try {
-          const res = await deleteTerm(eventClickInfo.event.id);
-          if (res.status === 200) {
-            window.location.reload();
-          }
-        } catch (error) {}
-      }
+      onOpenDelete();
     }
   };
 
@@ -233,18 +238,28 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     const r = getTimeDifference(eventInfo.term);
 
     if (r) {
-      const confirmed = confirm(`Are you sure you want to cancel this term (${eventInfo.term})?`);
-      if (confirmed) {
-        try {
-          const res = await cancelTerm(eventInfo.id);
-          if (res.status === 200) {
-            window.location.reload();
-          }
-        } catch (error) {}
-      }
+      onOpenConfirm();
     } else {
-      alert("Cancellation of the term is possible up to 12 hours before its scheduled start time.");
+      onOpenAlert();
     }
+  };
+
+  const confirmCancel = async () => {
+    try {
+      const res = await cancelTerm(eventInfo.id);
+      if (res.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {}
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const res = await deleteTerm(eventInfo.id);
+      if (res.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {}
   };
 
   return (
@@ -398,6 +413,114 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      <AlertDialog isOpen={isOpenConfirm} leastDestructiveRef={cancelRef} onClose={onCloseConfirm}>
+        <AlertDialogOverlay bg="blackAlpha.600">
+          <AlertDialogContent textAlign="center" color="#040D12" bg="#93B1A6">
+            <AlertDialogHeader mt="8px" fontSize="lg" fontWeight="bold">
+              Cancel Term
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text mt="8px">Are you sure you want to cancel this term?</Text>
+              <Text mt="8px">{eventInfo.term}</Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter justifyContent="center">
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                ref={cancelRef}
+                onClick={onCloseConfirm}
+              >
+                No
+              </Button>
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#F1C93B"
+                _hover={{ bgColor: "#FAE392", color: "#183D3D" }}
+                color="#040D12"
+                ml={3}
+                onClick={confirmCancel}
+              >
+                Yes
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      <AlertDialog isOpen={isOpenAlert} leastDestructiveRef={cancel2Ref} onClose={onCloseAlert}>
+        <AlertDialogOverlay bg="blackAlpha.600">
+          <AlertDialogContent textAlign="center" color="#040D12" bg="#93B1A6">
+            <AlertDialogHeader mt="8px" fontSize="lg" fontWeight="bold">
+              Cancel Term
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text>Cancellation of the term is possible up to 12 hours before its scheduled start time.</Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter justifyContent="center">
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                ref={cancel2Ref}
+                onClick={onCloseAlert}
+              >
+                Ok
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
+      <AlertDialog isOpen={isOpenDelete} leastDestructiveRef={cancel3Ref} onClose={onCloseDelete}>
+        <AlertDialogOverlay bg="blackAlpha.600">
+          <AlertDialogContent textAlign="center" color="#040D12" bg="#93B1A6">
+            <AlertDialogHeader mt="8px" fontSize="lg" fontWeight="bold">
+              Delete Term
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text>Are you sure you want to delete this term?</Text>
+              <Text>{eventInfo.term}</Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter justifyContent="center">
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                ref={cancel3Ref}
+                onClick={onCloseDelete}
+              >
+                No
+              </Button>
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#F1C93B"
+                _hover={{ bgColor: "#FAE392", color: "#183D3D" }}
+                color="#040D12"
+                ml={3}
+                onClick={confirmDelete}
+              >
+                Yes
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Flex>
   );
 }

@@ -4,6 +4,12 @@ import editInstruction from "@/helpers/editInstruction";
 import IInstruction from "@/interfaces/IInstruction";
 import IUserProps from "@/interfaces/IUserProps";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Button,
   Flex,
   Heading,
@@ -20,13 +26,17 @@ import {
   Textarea,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { RxCross1 } from "react-icons/rx";
 
 export default function TutorInstructions({ userData, userInstructions, subjects }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const cancelRef = useRef(null);
+
+  const [id, setId] = useState("");
   const [instruction, setInstruction] = useState<IInstruction>({
     instructor_id: userData?.id,
   });
@@ -42,18 +52,6 @@ export default function TutorInstructions({ userData, userInstructions, subjects
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setEditInstr({ ...editInstr, [e.target.id]: e.target.value });
-  };
-
-  const deleteI = async (id: any) => {
-    const confirmed = confirm("Are you sure you want to delete this instruction?");
-    if (confirmed && id) {
-      try {
-        const res = await deleteInstruction(id);
-        if (res.status === 200) {
-          window.location.reload();
-        }
-      } catch (error) {}
-    }
   };
 
   const editI = async () => {
@@ -93,6 +91,17 @@ export default function TutorInstructions({ userData, userInstructions, subjects
       }
     } catch (error) {}
   };
+
+  const confirmDelete = async() => {
+    if (id) {
+      try {
+        const res = await deleteInstruction(id);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
+    }
+  }
 
   return (
     <Flex mt="64px" mb="64px" justify="center" align="center" direction="column">
@@ -139,7 +148,7 @@ export default function TutorInstructions({ userData, userInstructions, subjects
               >
                 <FiEdit3 />
               </Button>
-              <Button onClick={() => deleteI(i?.instruction_id)} _hover={{ color: "#040D12" }} variant="unstyled">
+              <Button onClick={() => {setId(i?.instruction_id || ""); onOpenDelete();}} _hover={{ color: "#040D12" }} variant="unstyled">
                 <RxCross1 />
               </Button>
             </Flex>
@@ -397,6 +406,46 @@ export default function TutorInstructions({ userData, userInstructions, subjects
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <AlertDialog isOpen={isOpenDelete} leastDestructiveRef={cancelRef} onClose={onCloseDelete}>
+        <AlertDialogOverlay bg="blackAlpha.600">
+          <AlertDialogContent textAlign="center" color="#040D12" bg="#93B1A6">
+            <AlertDialogHeader mt="8px" fontSize="lg" fontWeight="bold">
+              Delete Instruction
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Text>Are you sure you want to delete this instruction?</Text>
+              <Text fontSize="12px">(You can only delete instructions that don't have reserved terms)</Text>
+            </AlertDialogBody>
+
+            <AlertDialogFooter justifyContent="center">
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                ref={cancelRef}
+                onClick={onCloseDelete}
+              >
+                No
+              </Button>
+              <Button
+                fontWeight="50px"
+                mb="8px"
+                bgColor="#F1C93B"
+                _hover={{ bgColor: "#FAE392", color: "#183D3D" }}
+                color="#040D12"
+                ml={3}
+                onClick={confirmDelete}
+              >
+                Yes
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Flex>
   );
 }
