@@ -66,6 +66,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     term: "",
     subject_name: "",
     student_name: "",
+    student_id: "",
     description: "",
   });
   const [term, setTerm] = useState({
@@ -192,6 +193,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
       term: termDate,
       subject_name: subject_name,
       student_name: student_name,
+      student_id: student_id,
       description: description,
     });
 
@@ -246,7 +248,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
 
   const confirmCancel = async () => {
     try {
-      const res = await cancelTerm(eventInfo.id);
+      const res = await cancelTerm(eventInfo.id, eventInfo.student_id, eventInfo.term);
       if (res.status === 200) {
         window.location.reload();
       }

@@ -48,6 +48,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
     term: "",
     subject_name: "",
     instructor_name: "",
+    instructor_id: "",
     description: "",
   });
 
@@ -104,6 +105,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
       id: id,
       term: term,
       subject_name: subject_name,
+      instructor_id: instructor_id,
       instructor_name: instructor_name,
       description: description,
     });
@@ -139,7 +141,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
 
   const confirm = async () => {
     try {
-      const res = await cancelTerm(eventInfo.id);
+      const res = await cancelTerm(eventInfo.id, eventInfo.instructor_id, eventInfo.term);
       if (res.status === 200) {
         window.location.reload();
       }
