@@ -38,13 +38,16 @@ export default function chat({ userData, publishKey, subscribeKey, users, channe
         <Flex h="calc(100vh - 100px)">
           {channels && (
             <Chat currentChannel={currentChannel.id} users={users as UserEntity[]} theme={theme}>
-              <Box w="264px">
+              <Box w={{ base: "116px", sm: "164px", md: "264px" }}>
                 <ChannelList channels={channels} onChannelSwitched={(ch) => setCurrentChannel(ch)} />
               </Box>
 
-              <Flex w="calc(100vw - 264px)" direction="column">
+              <Flex
+                w={{ base: "calc(100vw - 116px)", sm: "calc(100vw - 164px)", md: "calc(100vw - 264px)" }}
+                direction="column"
+              >
                 <MessageList fetchMessages={25} enableReactions reactionsPicker={<Picker data={emojiData} />}>
-                  <TypingIndicator/>
+                  <TypingIndicator />
                 </MessageList>
                 <MessageInput typingIndicator emojiPicker={<Picker data={emojiData} />} />
               </Flex>
