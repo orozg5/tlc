@@ -13,3 +13,35 @@
 body {
   overflow-x: hidden;
 }
+
+.pn-msg-list {
+  --msg-list__background: #040d12 !important;
+  --msg--hover__background: #183d3d !important;
+
+  --msg__reaction--active__background: rgba(241, 201, 59, 0.3) !important;
+  --msg__reaction--active--hover__background: rgba(241, 201, 59, 0.4) !important;
+  --msg__reaction--active--hover__border: 1px solid rgba(241, 201, 59, 0.4) !important;
+
+  --msg__actions--hover__color: #eeeeee !important;
+  --msg__actions--hover__border: 1px solid #eeeeee !important;
+}
+
+.pn-msg-input {
+  --msg-input__background: #040d12 !important;
+  --msg-input__send--active__color: #f1c93b !important;
+  --msg-input__send__color: #eeeeee !important;
+  --msg-input__icon__color: #eeeeee !important;
+  --msg-input__placeholder__color: rgba(128, 128, 128, 0.705) !important;
+  --msg-input__textarea__background: ;
+  --msg-input__textarea__color: #eeeeee !important;
+
+  --msg-input__textarea__background: rgba(58, 58, 58, 0.349) !important;
+}
+
+.pn-channel-list {
+  --channel-list__background: rgba(58, 58, 58, 0.349) !important;
+  --channel--hover__background: #040d12 !important;
+  --channel--active__background: #040d12 !important;
+  --channel--hover__name__color: #eeeeee !important;
+  --channel--active__name__color: #eeeeee !important;
+}

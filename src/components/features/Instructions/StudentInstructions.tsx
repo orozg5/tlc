@@ -496,18 +496,9 @@ export default function StudentInstructions({
             <Text>{info.instruction?.price} €/h</Text>
             <Text mt="16px">{info.instruction?.description}</Text>
 
+            
             <Button
               mt="16px"
-              bg="#183D3D"
-              color="#eeeeee"
-              fontWeight="50px"
-              _hover={{ bg: "#5C8374", color: "#040D12" }}
-            >
-              Chat
-            </Button>
-            <Button
-              mt="16px"
-              ml="8px"
               bg="#183D3D"
               color="#eeeeee"
               fontWeight="50px"
@@ -517,7 +508,7 @@ export default function StudentInstructions({
                 onOpenCalendar();
               }}
             >
-              Calendar
+              Check Tutor Calendar
             </Button>
           </ModalBody>
         </ModalContent>

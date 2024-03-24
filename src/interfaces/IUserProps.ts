@@ -5,6 +5,7 @@ import ISubject from "./ISubject";
 import IUser from "./IUser";
 import ITerm from "./ITerm";
 import IStudent from "./IStudent";
+import { ChannelEntity, UserEntity } from "@pubnub/react-chat-components";
 
 export default interface IUserProps {
   userData?: IUser;
@@ -16,4 +17,8 @@ export default interface IUserProps {
   myTerms?: ITerm[];
   students?: IStudent[];
   terms?: ITerm[];
+  publishKey?: string;
+  subscribeKey?: string;
+  users?: UserEntity[];
+  channels?: ChannelEntity[];
 }
