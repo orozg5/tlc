@@ -15,36 +15,46 @@ import { convertDateTime } from "@/utils/convertDateTime";
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { instructor_id, date, duration_h, duration_m, description, repeat } = req.body;
+    const { instructor_id, date, end_date, duration_h, duration_m, description, repeat } = req.body;
     const duration_min = duration_h * 60 + duration_m;
     const dates = [date];
-    const end =
-      repeat === "m" ? new Date(addYears(date, 1)) : repeat === "n" ? new Date(date) : new Date(addMonths(date, 1));
 
-    let newDate = new Date(date);
+    if (repeat != "n") {
+      const end = new Date(end_date);
+      let newDate = new Date(date);
+      while (newDate < end) {
+        if (repeat == "d") {
+          newDate = addDays(newDate, 1);
+          dates.push(convertDateTime(new Date(newDate)));
+        }
 
-    while (newDate < end) {
-      if (repeat == "d") {
-        newDate = addDays(newDate, 1);
-        dates.push(convertDateTime(new Date(newDate)));
-      }
+        if (repeat == "dww") {
+          newDate = addDays(newDate, 1);
+          while (newDate.getDay() === 0 || newDate.getDay() === 6) {
+            newDate = addDays(newDate, 1);
+          }
+          if (newDate < end) dates.push(convertDateTime(new Date(newDate)));
+        }
 
-      if (repeat == "w") {
-        newDate = addWeeks(newDate, 1);
-        dates.push(convertDateTime(new Date(newDate)));
-      }
+        if (repeat == "w") {
+          newDate = addWeeks(newDate, 1);
+          dates.push(convertDateTime(new Date(newDate)));
+        }
 
-      if (repeat == "m") {
-        newDate = addMonths(newDate, 1);
-        dates.push(convertDateTime(new Date(newDate)));
+        if (repeat == "m") {
+          newDate = addMonths(newDate, 1);
+          dates.push(convertDateTime(new Date(newDate)));
+        }
       }
     }
 
     for (const d of dates) {
-      await query(
-        `INSERT INTO terms (instructor_id, start, duration_min, description) VALUES ($1, $2, $3, $4)`,
-        [instructor_id, d, duration_min, description]
-      );
+      await query(`INSERT INTO terms (instructor_id, start, duration_min, description) VALUES ($1, $2, $3, $4)`, [
+        instructor_id,
+        d,
+        duration_min,
+        description,
+      ]);
     }
 
     res.status(200).json({ message: "Term added successfully." });

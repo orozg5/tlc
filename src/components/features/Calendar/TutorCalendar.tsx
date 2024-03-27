@@ -72,6 +72,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
   const [term, setTerm] = useState({
     instructor_id: userData?.id || "",
     date: "",
+    end_date: "",
     duration_h: 0,
     duration_m: 0,
     description: "",
@@ -116,8 +117,10 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
 
   const handleDateClick = (arg: any) => {
     const formattedDate = new Date(arg.dateStr);
-    setTerm({ ...term, date: convertDateTime(formattedDate) });
-    onOpen();
+    if (formattedDate > new Date()) {
+      setTerm({ ...term, date: convertDateTime(formattedDate) });
+      onOpen();
+    }
   };
 
   const handleTerm = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -130,7 +133,13 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     const startHour = new Date(term.date).getHours();
     const startMinute = new Date(term.date).getMinutes();
     duration_m = Math.min(duration_m, 22 * 60 - (startHour * 60 + startMinute) - duration_h * 60);
-    setTerm({ ...term, duration_m: duration_m });
+
+    if (duration_h * 60 + duration_m < 45) {
+      duration_h = 0;
+      duration_m = 45;
+    }
+
+    setTerm({ ...term, duration_h, duration_m });
   };
 
   const handleHoursChange = (e: any) => {
@@ -139,7 +148,13 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     const startHour = new Date(term.date).getHours();
     const startMinute = new Date(term.date).getMinutes();
     duration_h = Math.min(duration_h, Math.floor(((22 - startHour) * 60 - startMinute - duration_m) / 60));
-    setTerm({ ...term, duration_h });
+
+    if (duration_h * 60 + duration_m < 45) {
+      duration_h = 0;
+      duration_m = 45;
+    }
+
+    setTerm({ ...term, duration_h, duration_m });
   };
 
   const handleDateTimeTerm = (e: any) => {
@@ -157,6 +172,16 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     }
 
     setTerm({ ...term, date: convertDateTime(datetime) });
+  };
+
+  const handleEndDateTerm = (e: any) => {
+    let date = new Date(term.date);
+    let dayafter = new Date(date);
+    dayafter.setDate(date.getDate() + 1);
+    let end = new Date(e.target.value);
+
+    if (end < date) setTerm({ ...term, end_date: convertDateTime(dayafter) });
+    else setTerm({ ...term, end_date: convertDateTime(end) });
   };
 
   const handleEventClick = async (eventClickInfo: any) => {
@@ -207,7 +232,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError(false);
-    if (!term.date || (term.duration_h == 0 && term.duration_m == 0)) {
+    if (!term.date || (term.duration_h == 0 && term.duration_m == 0) || (term.repeat != "n" && !term.end_date)) {
       setError(true);
       return;
     }
@@ -223,11 +248,26 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
   };
 
   function renderEventContent(eventInfo: any) {
+    let show = 1;
+    const [start, end] = eventInfo.timeText.split("-");
+    const sHour = Number(start.trim().split(":")[0]);
+    if (end) {
+      const eHour = Number(end.trim().split(":")[0]);
+      if (eHour - sHour <= 1) show = 0;
+    }
     return (
-      <div>
+      <div
+        style={{
+          backgroundColor: eventInfo.event.backgroundColor,
+          color: eventInfo.event.textColor,
+          paddingLeft: "4px",
+          width: "100%",
+          borderRadius: "8px",
+        }}
+      >
         <Hide below="md">
           <Text>{eventInfo?.timeText}</Text>
-          <Text>{eventInfo?.event?.title}</Text>
+          {show == 1 && <Text>{eventInfo.event.title}</Text>}
         </Hide>
         <Show below="md">
           <Text>{eventInfo?.timeText?.split(" ")[0]}</Text>
@@ -263,6 +303,8 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
       }
     } catch (error) {}
   };
+
+  console.log(term);
 
   return (
     <Flex justify="center" p={{ base: "8px", md: "64px" }}>
@@ -350,9 +392,26 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
               >
                 <option value="n">Never</option>
                 <option value="d">Daily</option>
+                <option value="dww">Daily without weekends</option>
                 <option value="w">Weekly</option>
                 <option value="m">Monthly</option>
               </Select>
+
+              {term.repeat != "n" && (
+                <>
+                  <Text mt="16px">Repeat Until</Text>
+                  <Input
+                    id="end_date"
+                    type="datetime-local"
+                    onChange={handleEndDateTerm}
+                    value={term.end_date}
+                    w="264px"
+                    borderColor="#040D12"
+                    _hover={{ borderColor: "#5C8374" }}
+                    focusBorderColor="#040D12"
+                  />
+                </>
+              )}
 
               <Text mt="16px">Description</Text>
               <Textarea

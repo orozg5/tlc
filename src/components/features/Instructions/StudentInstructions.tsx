@@ -43,6 +43,8 @@ import getTutorTerms from "@/helpers/getTutorTerms";
 import { convertDateTime } from "@/utils/convertDateTime";
 import reserveTerm from "@/helpers/reserveTerm";
 import termConvertor from "@/utils/termConvertor";
+import canReserve from "@/utils/canReserve";
+import { getTimeDifference } from "@/utils/getTimeDifference";
 
 export default function StudentInstructions({
   userData,
@@ -57,7 +59,7 @@ export default function StudentInstructions({
   const { isOpen: isOpenReserve, onOpen: onOpenReserve, onClose: onCloseReserve } = useDisclosure();
   const cancelRef = useRef(null);
 
-  const [reserve, setReserve] = useState({term: "", id: ""});
+  const [reserve, setReserve] = useState({ term: "", id: "" });
   const [events, setEvents] = useState<{ start: string; end: string }[]>([]);
   const [theTerms, setTheTerms] = useState<ITerm[]>();
   const [filter, setFilter] = useState({
@@ -117,8 +119,10 @@ export default function StudentInstructions({
 
   const handleEventClick = async (eventClickInfo: any) => {
     const term = termConvertor(eventClickInfo);
-    setReserve({term: term, id: eventClickInfo.event.id});
-    onOpenReserve();
+    if (getTimeDifference(term)) {
+      setReserve({ term: term, id: eventClickInfo.event.id });
+      onOpenReserve();
+    }
   };
 
   function renderEventContent(eventInfo: any) {
@@ -134,7 +138,7 @@ export default function StudentInstructions({
     );
   }
 
-  const confirmReserve = async() => {
+  const confirmReserve = async () => {
     try {
       if (reserve.id && info.instructor.user_id && userData?.id && info.instruction.instruction_id) {
         const data = {
@@ -151,7 +155,7 @@ export default function StudentInstructions({
         }
       }
     } catch (error) {}
-  }
+  };
 
   return (
     <Flex direction="column" align="center" justify="center" mt="64px" mb="64px">
@@ -496,7 +500,6 @@ export default function StudentInstructions({
             <Text>{info.instruction?.price} €/h</Text>
             <Text mt="16px">{info.instruction?.description}</Text>
 
-            
             <Button
               mt="16px"
               bg="#183D3D"

@@ -3,6 +3,7 @@ import axiosInstance from "axios";
 const addTerm = async (term: {
   instructor_id: string;
   date: string;
+  end_date: string;
   duration_h: number;
   duration_m: number;
   description: string;

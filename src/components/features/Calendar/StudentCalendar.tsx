@@ -116,11 +116,26 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
   };
 
   const renderEventContent = (eventInfo: any) => {
+    let show = 1;
+    const [start, end] = eventInfo.timeText.split("-");
+    const sHour = Number(start.trim().split(":")[0]);
+    if (end) {
+      const eHour = Number(end.trim().split(":")[0]);
+      if (eHour - sHour <= 1) show = 0;
+    }
     return (
-      <div>
+      <div
+        style={{
+          backgroundColor: "#183D3D",
+          color: "#eeeeee",
+          paddingLeft: "4px",
+          width: "100%",
+          borderRadius: "8px",
+        }}
+      >
         <Hide below="md">
           <Text>{eventInfo.timeText}</Text>
-          <Text>{eventInfo.event.title}</Text>
+          {show == 1 && <Text>{eventInfo.event.title}</Text>}
         </Hide>
         <Show below="md">
           <Text>{eventInfo.timeText.split(" ")[0]}</Text>
@@ -245,9 +260,7 @@ export default function StudentCalendar({ subjects, myTerms, allInstructions, in
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              <Text>
-                Cancellation of the term is possible up to 12 hours before its scheduled start time.
-              </Text>
+              <Text>Cancellation of the term is possible up to 12 hours before its scheduled start time.</Text>
             </AlertDialogBody>
 
             <AlertDialogFooter justifyContent="center">
