@@ -7,6 +7,7 @@ import ITerm from "./ITerm";
 import IStudent from "./IStudent";
 import { ChannelEntity, UserEntity } from "@pubnub/react-chat-components";
 import IMaterial from "./IMaterial";
+import IFolder from "./IFolder";
 
 export default interface IUserProps {
   userData?: IUser;
@@ -23,4 +24,5 @@ export default interface IUserProps {
   users?: UserEntity[];
   channels?: ChannelEntity[];
   materials?: IMaterial[];
+  folders?: IFolder[];
 }
