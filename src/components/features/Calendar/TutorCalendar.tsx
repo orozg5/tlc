@@ -304,8 +304,6 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     } catch (error) {}
   };
 
-  console.log(term);
-
   return (
     <Flex justify="center" p={{ base: "8px", md: "64px" }}>
       <Box w="800px">
