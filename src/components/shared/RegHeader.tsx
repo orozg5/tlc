@@ -1,15 +1,4 @@
-import {
-  Avatar,
-  Button,
-  Flex,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
-  Show,
-  Text,
-} from "@chakra-ui/react";
+import { Avatar, Button, Flex, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Show, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import IUserProps from "@/interfaces/IUserProps";
 import logout from "@/helpers/logout";
@@ -57,13 +46,11 @@ export default function RegHeader({ userData }: IUserProps) {
               Instructions
             </Text>
           </Link>
-          {userData?.role == "tutor" && (
-            <Link href="/materials">
-              <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
-                Materials
-              </Text>
-            </Link>
-          )}
+          <Link href="/materials">
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+              Materials
+            </Text>
+          </Link>
           <Link href="/calendar">
             <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
               Calendar
@@ -99,11 +86,9 @@ export default function RegHeader({ userData }: IUserProps) {
               <MenuItem as="a" href="/instructions">
                 Instructions
               </MenuItem>
-              {userData?.role == "tutor" && (
-                <MenuItem as="a" href="/materials">
-                  Materials
-                </MenuItem>
-              )}
+              <MenuItem as="a" href="/materials">
+                Materials
+              </MenuItem>
               <MenuItem as="a" href="/calendar">
                 Calendar
               </MenuItem>
