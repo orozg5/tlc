@@ -40,6 +40,7 @@ import { v4 as uuidv4 } from "uuid";
 import materialShare from "@/helpers/materialShare";
 import editShareMaterial from "@/helpers/editShareMaterial";
 import editFolder from "@/helpers/editFolder";
+import deleteFolder from "@/helpers/deleteFolder";
 
 export default function TutorMaterials({ userData, materials, folders, users, materials_students }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -47,6 +48,7 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
   const { isOpen: isCFOpen, onOpen: onCFOpen, onClose: onCFClose } = useDisclosure();
   const { isOpen: isShareOpen, onOpen: onShareOpen, onClose: onShareClose } = useDisclosure();
   const { isOpen: isEditShareOpen, onOpen: onEditShareOpen, onClose: onEditShareClose } = useDisclosure();
+  const { isOpen: isDeleteFolderOpen, onOpen: onDeleteFolderOpen, onClose: onDeleteFolderClose } = useDisclosure();
 
   const [file, setFile] = useState();
   const [materialId, setMaterialId] = useState("");
@@ -144,7 +146,7 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
         window.location.reload();
       }
     }
-  }
+  };
 
   const handleFileSelected = (e: any) => {
     setFile(e.target.files[0]);
@@ -182,6 +184,16 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
   const handleEditShare = async () => {
     if (editShare.id && editShare.date) {
       const res = await editShareMaterial(editShare.id, editShare.date);
+      if (res.status === 200) {
+        window.location.reload();
+      }
+    }
+  };
+
+  const handleDeleteFolder = async () => {
+    if (folderName && path && folderId) {
+      let sendPath = path.split("/").join("***");
+      const res = await deleteFolder(folderName, sendPath, folderId);
       if (res.status === 200) {
         window.location.reload();
       }
@@ -263,7 +275,14 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
                   />
                 </Text>
                 <Text _hover={{ cursor: "pointer", color: "#040D12" }}>
-                  <MdDeleteOutline size="22px" />
+                  <MdDeleteOutline
+                    onClick={() => {
+                      setFolderName(f.folder_name);
+                      setFolderId(f.folder_id || "");
+                      onDeleteFolderOpen();
+                    }}
+                    size="22px"
+                  />
                 </Text>
               </Flex>
             </Flex>
@@ -572,6 +591,36 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
                 _hover={{ bgColor: "#FAE392", color: "gray.500" }}
               >
                 Submit
+              </Button>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isDeleteFolderOpen} onClose={onDeleteFolderClose}>
+        <ModalOverlay bg="blackAlpha.800" />
+        <ModalContent color="#040D12" bg="#93B1A6">
+          <ModalCloseButton />
+          <ModalBody textAlign="center">
+            <Text mt="8px">Are you sure you want to delete {folderName} and all of it's contents?</Text>
+            <Flex mb="16px" mt="16px" gap="8px" justify="center">
+              <Button
+                onClick={() => {
+                  onDeleteFolderClose();
+                }}
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeleteFolder}
+                color="#040D12"
+                bgColor="#F1C93B"
+                _hover={{ bgColor: "#FAE392", color: "gray.500" }}
+              >
+                Yes
               </Button>
             </Flex>
           </ModalBody>
