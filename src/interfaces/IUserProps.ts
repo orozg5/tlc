@@ -32,5 +32,7 @@ export default interface IUserProps {
   materials_students?: IMaterialStudent[];
   currentStudentMaterials?: IStudentsMaterial[];
   doneTerms?: IDoneTerm[];
+  doneTutorTerms?: IDoneTerm[];
   rated?: IRated[];
+  ratedTutor?: IRated[];
 }

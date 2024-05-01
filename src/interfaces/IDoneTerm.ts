@@ -8,7 +8,7 @@ export default interface IDoneTerm {
   first_name: string;
   last_name: string;
   profile_photo: string;
-  rated: boolean;
+  rated?: boolean;
   payed: boolean;
   subject_name: string;
 };

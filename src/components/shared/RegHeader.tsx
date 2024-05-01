@@ -62,9 +62,16 @@ export default function RegHeader({ userData }: IUserProps) {
             </Text>
           </Link>
           <Link href="/rate-pay">
-            <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
-              Rate & Pay
-            </Text>
+            {userData?.role == "student" && (
+              <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
+                Rate & Pay
+              </Text>
+            )}
+            {userData?.role == "tutor" && (
+              <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
+                Feedback & Payments
+              </Text>
+            )}
           </Link>
         </Show>
       </Flex>
@@ -100,9 +107,16 @@ export default function RegHeader({ userData }: IUserProps) {
               <MenuItem as="a" href="/chat">
                 Chat
               </MenuItem>
-              <MenuItem as="a" href="/rate-pay">
-                Rate & Pay
-              </MenuItem>
+              {userData?.role == "student" && (
+                <MenuItem as="a" href="/rate-pay">
+                  Rate & Pay
+                </MenuItem>
+              )}
+              {userData?.role == "tutor" && (
+                <MenuItem as="a" href="/rate-pay">
+                  Feedback & Payments
+                </MenuItem>
+              )}
             </MenuList>
           </Menu>
         </Show>
