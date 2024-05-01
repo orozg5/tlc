@@ -10,6 +10,8 @@ import IMaterial from "./IMaterial";
 import IFolder from "./IFolder";
 import IMaterialStudent from "./IMaterialStudent";
 import IStudentsMaterial from "./IStudentsMaterial";
+import IDoneTerm from "./IDoneTerm";
+import IRated from "./IRated";
 
 export default interface IUserProps {
   userData?: IUser;
@@ -29,4 +31,6 @@ export default interface IUserProps {
   folders?: IFolder[];
   materials_students?: IMaterialStudent[];
   currentStudentMaterials?: IStudentsMaterial[];
+  doneTerms?: IDoneTerm[];
+  rated?: IRated[];
 }

@@ -32,12 +32,12 @@ export default function RegHeader({ userData }: IUserProps) {
 
         <Show breakpoint="(min-width: 900px)">
           <Link href="/home">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
               Home
             </Text>
           </Link>
           <Link href="/forum">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
               Forum
             </Text>
           </Link>
@@ -47,18 +47,23 @@ export default function RegHeader({ userData }: IUserProps) {
             </Text>
           </Link>
           <Link href="/materials">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
               Materials
             </Text>
           </Link>
           <Link href="/calendar">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
               Calendar
             </Text>
           </Link>
           <Link href="/chat">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
               Chat
+            </Text>
+          </Link>
+          <Link href="/rate-pay">
+            <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
+              Rate & Pay
             </Text>
           </Link>
         </Show>
@@ -94,6 +99,9 @@ export default function RegHeader({ userData }: IUserProps) {
               </MenuItem>
               <MenuItem as="a" href="/chat">
                 Chat
+              </MenuItem>
+              <MenuItem as="a" href="/rate-pay">
+                Rate & Pay
               </MenuItem>
             </MenuList>
           </Menu>

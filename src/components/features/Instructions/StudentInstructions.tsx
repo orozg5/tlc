@@ -43,7 +43,6 @@ import getTutorTerms from "@/helpers/getTutorTerms";
 import { convertDateTime } from "@/utils/convertDateTime";
 import reserveTerm from "@/helpers/reserveTerm";
 import termConvertor from "@/utils/termConvertor";
-//import canReserve from "@/utils/canReserve";
 import { getTimeDifference } from "@/utils/getTimeDifference";
 
 export default function StudentInstructions({
