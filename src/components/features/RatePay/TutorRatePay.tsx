@@ -18,7 +18,7 @@ export default function TutorRatePay({ doneTutorTerms, ratedTutor }: IUserProps)
             color="#eeeeee"
             _hover={{ bgColor: "#5C8374", color: "#040D12" }}
           >
-            Not payed
+            Not paid
           </Button>
           <Button
             onClick={() => setFilter(1)}
@@ -27,7 +27,7 @@ export default function TutorRatePay({ doneTutorTerms, ratedTutor }: IUserProps)
             color="#eeeeee"
             _hover={{ bgColor: "#5C8374", color: "#040D12" }}
           >
-            Payed
+            Paid
           </Button>
           <Button
             onClick={() => setFilter(2)}

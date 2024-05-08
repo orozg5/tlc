@@ -21,6 +21,8 @@ import { convertDateTime } from "@/utils/convertDateTime";
 import addRating from "@/helpers/addRating";
 import IUserProps from "@/interfaces/IUserProps";
 import cancelRating from "@/helpers/cancelRating";
+import { createCheckoutSession } from "@/utils/stripe";
+import payTutor from "@/helpers/payTutor";
 
 export default function StudentRatePay({ userData, doneTerms, rated }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -60,6 +62,20 @@ export default function StudentRatePay({ userData, doneTerms, rated }: IUserProp
         window.location.reload();
       }
     } catch (error) {}
+  };
+
+  const handlePay = async (productId: string, price: number, productName: string) => {
+    try {
+      const session = await createCheckoutSession(productId, price, productName);
+      if (session){
+        const res = await payTutor(productId);
+        if (res.status === 200) {
+          window.location.href = session.url;
+        }
+      }
+    } catch (error) {
+      console.error("Error creating Checkout Session:", error);
+    }
   };
 
   return (
@@ -155,7 +171,12 @@ export default function StudentRatePay({ userData, doneTerms, rated }: IUserProp
                     </Flex>
                   )}
                   {!t.payed && (
-                    <Button bgColor="#F1C93B" color="#040D12" _hover={{ bgColor: "#FAE392", color: "gray.500" }}>
+                    <Button
+                      onClick={() => handlePay(t.term_id, t.price, t.subject_name + ", " + t.start.split("T")[0])}
+                      bgColor="#F1C93B"
+                      color="#040D12"
+                      _hover={{ bgColor: "#FAE392", color: "gray.500" }}
+                    >
                       Pay
                     </Button>
                   )}
