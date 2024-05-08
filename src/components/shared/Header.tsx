@@ -4,12 +4,37 @@ import Link from "next/link";
 import IUserProps from "@/interfaces/IUserProps";
 import logout from "@/helpers/logout";
 import { IoMenu } from "react-icons/io5";
+import { useRouter } from "next/router";
 
 export default function Header({ userData }: IUserProps) {
   const logOut = async () => {
     const res = await logout();
     if (res.status === 200) {
       window.location.reload();
+    }
+  };
+  
+  const router = useRouter();
+  const handleAboutUsClick = () => {
+    if (router.pathname === "/instructions") {
+      router.push("/");
+      setTimeout(() => {
+        const aboutusElement = document.getElementById("aboutus");
+        if (aboutusElement) {
+          aboutusElement.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 500);
+    }
+  };
+  const handleContactsClick = () => {
+    if (router.pathname === "/instructions") {
+      router.push("/");
+      setTimeout(() => {
+        const contactsElement = document.getElementById("contacts");
+        if (contactsElement) {
+          contactsElement.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 500);
     }
   };
 
@@ -39,17 +64,17 @@ export default function Header({ userData }: IUserProps) {
               </Text>
             </Link>
           )}
-          <ScrollLink to="aboutus" spy={true} smooth={true} duration={500} offset={-80}>
+          <ScrollLink to="aboutus" spy={true} smooth={true} duration={500} offset={-80} onClick={handleAboutUsClick}>
             <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
               About us
             </Text>
           </ScrollLink>
-          <Link href="/forum">
+          <Link href="/instructions">
             <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
-              Forum
+              Instructions
             </Text>
           </Link>
-          <ScrollLink to="contacts" spy={true} smooth={true} duration={500} offset={-80}>
+          <ScrollLink to="contacts" spy={true} smooth={true} duration={500} offset={-80} onClick={handleContactsClick}>
             <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
               Contacts
             </Text>
@@ -93,8 +118,8 @@ export default function Header({ userData }: IUserProps) {
               </MenuItem>
             )}
             
-            <MenuItem as="a" href="/forum">
-              Forum
+            <MenuItem as="a" href="/instructions">
+              Instructions
             </MenuItem>
             <MenuDivider />
             {!userData?.email && (

@@ -15,9 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { instruction_id, subject_id, grade, type, description, price } = req.body;
 
+    const grades = grade.map((g: { label: string; value: string; }) => g.value);
+
     await query(
       "UPDATE instructions SET subject_id = $2, grade = $3, type = $4, description = $5, price = $6 WHERE instruction_id = $1",
-      [instruction_id, subject_id, grade, type, description, price]
+      [instruction_id, subject_id, grades, type, description, price]
     );
 
     res.status(200).json({ message: "Successfully edited the instruction." });

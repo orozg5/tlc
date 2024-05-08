@@ -13,7 +13,61 @@ import { query } from "@/lib/postgres";
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const instructions = await query("SELECT * FROM instructions", []);
+    const sqlQuery = `
+      SELECT 
+          instructions.instruction_id,
+          instructions.instructor_id,
+          instructions.subject_id,
+          instructions.price,
+          instructions.type,
+          instructions.description,
+          instructions.grade,
+          i.first_name,
+          i.last_name,
+          i.gender,
+          i.date_of_birth,
+          i.city_id,
+          i.phone,
+          i.educational_attainment,
+          i.finished_school,
+          i.profile_photo,
+          i.description AS instructorDescription,
+          sc.subject_id,
+          sc.subject_name,
+          ROUND(AVG(ir.rating)) AS average_rating
+      FROM 
+          instructions
+      LEFT JOIN
+          instructors i ON instructions.instructor_id = i.user_id
+      LEFT JOIN 
+          instructor_ratings ir ON instructions.instructor_id = ir.instructor_id
+      LEFT JOIN 
+          subjects_catalog sc ON instructions.subject_id = sc.subject_id
+      GROUP BY
+          instructions.instruction_id,
+          instructions.instructor_id,
+          instructions.subject_id,
+          instructions.price,
+          instructions.type,
+          instructions.description,
+          instructions.grade,
+          i.first_name,
+          i.last_name,
+          i.gender,
+          i.date_of_birth,
+          i.city_id,
+          i.phone,
+          i.educational_attainment,
+          i.finished_school,
+          i.profile_photo,
+          i.description,
+          sc.subject_id,
+          sc.subject_name
+      ORDER BY
+          average_rating DESC, instructions.price;
+    `;
+
+    const instructions = await query(sqlQuery, []);
 
     res.status(200).json(instructions.rows);
   } catch (error) {

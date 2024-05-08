@@ -1,5 +1,6 @@
 import StudentInstructions from "@/components/features/Instructions/StudentInstructions";
 import TutorInstructions from "@/components/features/Instructions/TutorInstructions";
+import Header from "@/components/shared/Header";
 import RegHeader from "@/components/shared/RegHeader";
 import getAllInstructions from "@/helpers/getAllInstructions";
 import getCities from "@/helpers/getCities";
@@ -20,11 +21,11 @@ export default function instructions({
   cities,
   allInstructions,
   instructors,
-  terms
+  terms,
 }: IUserProps) {
   return (
     <>
-      <RegHeader userData={userData} />
+      {userData?.id && <RegHeader userData={userData} />}
       {userData?.role == "tutor" && (
         <TutorInstructions userData={userData} userInstructions={userInstructions} subjects={subjects} />
       )}
@@ -38,6 +39,19 @@ export default function instructions({
           terms={terms}
         />
       )}
+      {!userData?.id && (
+        <>
+          <Header userData={userData} />
+          <StudentInstructions
+            userData={userData}
+            subjects={subjects}
+            cities={cities}
+            allInstructions={allInstructions}
+            instructors={instructors}
+            terms={terms}
+          />
+        </>
+      )}
     </>
   );
 }
@@ -45,17 +59,12 @@ export default function instructions({
 export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }) => {
   let session = await getMe(req);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/signin",
-        permanent: false,
-      },
-    };
+  let userData = null;
+  let userInstructions = null;
+  if (session){
+    userData = await getCurrentUserInfo(req);
+    userInstructions = await getCurrentUserInstructions(req);
   }
-
-  const userData = await getCurrentUserInfo(req);
-  const userInstructions = await getCurrentUserInstructions(req);
   const subjects = await getSubjects();
   const cities = await getCities();
   const allInstructions = await getAllInstructions();

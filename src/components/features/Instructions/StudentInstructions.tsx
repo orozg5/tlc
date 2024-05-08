@@ -29,7 +29,7 @@ import {
 import FullCalendar from "@fullcalendar/react";
 import React, { useRef, useEffect, useState } from "react";
 import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
-import { FaGenderless } from "react-icons/fa";
+import { FaGenderless, FaStar } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
 import { LuCake } from "react-icons/lu";
 import { MdOutlineLocalPhone } from "react-icons/md";
@@ -44,6 +44,7 @@ import { convertDateTime } from "@/utils/convertDateTime";
 import reserveTerm from "@/helpers/reserveTerm";
 import termConvertor from "@/utils/termConvertor";
 import { getTimeDifference } from "@/utils/getTimeDifference";
+import { useRouter } from "next/navigation";
 
 export default function StudentInstructions({
   userData,
@@ -53,6 +54,7 @@ export default function StudentInstructions({
   instructors,
   terms,
 }: IUserProps) {
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
   const { isOpen: isOpenReserve, onOpen: onOpenReserve, onClose: onCloseReserve } = useDisclosure();
@@ -68,7 +70,8 @@ export default function StudentInstructions({
     price: "",
     city_id: "",
     instructor_id: "",
-    calendar: "",
+    startDate: "",
+    endDate: "",
   });
   const [info, setInfo] = useState<IInfo>({
     instructor: {},
@@ -112,15 +115,20 @@ export default function StudentInstructions({
       price: "",
       city_id: "",
       instructor_id: "",
-      calendar: "",
+      startDate: "",
+      endDate: "",
     });
   };
 
   const handleEventClick = async (eventClickInfo: any) => {
-    const term = termConvertor(eventClickInfo);
-    if (getTimeDifference(term)) {
-      setReserve({ term: term, id: eventClickInfo.event.id });
-      onOpenReserve();
+    if (!userData?.id) {
+      router.push("/signin");
+    } else {
+      const term = termConvertor(eventClickInfo);
+      if (getTimeDifference(term)) {
+        setReserve({ term: term, id: eventClickInfo.event.id });
+        onOpenReserve();
+      }
     }
   };
 
@@ -312,19 +320,43 @@ export default function StudentInstructions({
           </Box>
         </Flex>
 
-        <Flex mt="16px" direction="column" align="center" w={{ base: "264px", md: "232px" }}>
-          <Text>Date</Text>
-          <Input
-            bg="#93B1A6"
-            color="#040D12"
-            id="calendar"
-            value={filter.calendar}
-            onChange={handleChangeFilter}
-            borderColor="#040D12"
-            _hover={{ borderColor: "#5C8374" }}
-            focusBorderColor="#040D12"
-            type="date"
-          />
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          mt="16px"
+          gap="8px"
+          align="center"
+          justify="center"
+          textAlign="center"
+        >
+          <Box w={{ base: "264px", md: "232px" }}>
+            <Text>Start Date</Text>
+            <Input
+              bg="#93B1A6"
+              color="#040D12"
+              id="startDate"
+              value={filter.startDate}
+              onChange={handleChangeFilter}
+              borderColor="#040D12"
+              _hover={{ borderColor: "#5C8374" }}
+              focusBorderColor="#040D12"
+              type="date"
+            />
+          </Box>
+
+          <Box w={{ base: "264px", md: "232px" }}>
+            <Text>End Date</Text>
+            <Input
+              bg="#93B1A6"
+              color="#040D12"
+              id="endDate"
+              value={filter.endDate}
+              onChange={handleChangeFilter}
+              borderColor="#040D12"
+              _hover={{ borderColor: "#5C8374" }}
+              focusBorderColor="#040D12"
+              type="date"
+            />
+          </Box>
         </Flex>
 
         {(filter.subject_id ||
@@ -333,7 +365,8 @@ export default function StudentInstructions({
           filter.instructor_id ||
           filter.price ||
           filter.type ||
-          filter.calendar) && (
+          filter.startDate ||
+          filter.endDate) && (
           <Button
             onClick={clearFilter}
             bg="#183D3D"
@@ -359,13 +392,15 @@ export default function StudentInstructions({
                 instructors?.find((instructor) => instructor.user_id === i.instructor_id)?.city_id ===
                   filter.city_id) &&
               (filter.instructor_id === "" || i.instructor_id === filter.instructor_id) &&
-              (filter.calendar === "" ||
+              ((filter.startDate === "" && filter.endDate === "") ||
                 terms?.find(
                   (t) =>
                     t.instructor_id == i.instructor_id &&
                     !t.reserved &&
-                    new Date(t.start.split("T")[0]).toLocaleDateString() ==
-                      new Date(filter.calendar).toLocaleDateString()
+                    new Date(t.start.split("T")[0]).toLocaleDateString() >=
+                      new Date(filter.startDate).toLocaleDateString() &&
+                    new Date(t.start.split("T")[0]).toLocaleDateString() <=
+                      new Date(filter.endDate).toLocaleDateString()
                 ))
           )
           .map((instruction) => (
@@ -373,7 +408,18 @@ export default function StudentInstructions({
               _hover={{ cursor: "pointer" }}
               onClick={() => {
                 setInfo({
-                  instructor: instructors?.find((instructor) => instructor.user_id === instruction.instructor_id) || {},
+                  instructor: {
+                    first_name: instruction.first_name,
+                    last_name: instruction.last_name,
+                    gender: instruction.gender,
+                    date_of_birth: instruction.date_of_birth,
+                    city_id: instruction.city_id,
+                    phone: instruction.phone,
+                    educational_attainment: instruction.educational_attainment,
+                    finished_school: instruction.finished_school,
+                    description: instruction.instructorDescription,
+                    profile_photo: instruction.profile_photo,
+                  },
                   instruction: instruction || {},
                 });
                 onOpen();
@@ -388,26 +434,31 @@ export default function StudentInstructions({
                 maxW={{ base: "100px", md: "200px" }}
                 borderTopLeftRadius="16px"
                 borderBottomLeftRadius="16px"
-                src={`data:image/jpeg;base64,${
-                  instructors?.find((instructor) => instructor.user_id == instruction.instructor_id)?.profile_photo
-                }`}
+                src={`data:image/jpeg;base64,${instruction.profile_photo}`}
               />
               <Flex p="16px" direction="column" w={{ base: "200px", sm: "332px", md: "464px" }}>
-                <Heading>
-                  {subjects?.find((subject) => subject.subject_id == instruction.subject_id)?.subject_name}
-                </Heading>
+                <Heading>{instruction.subject_name}</Heading>
                 <Text>
-                  {instructors?.find((instructor) => instructor.user_id == instruction.instructor_id)?.first_name}{" "}
-                  {instructors?.find((instructor) => instructor.user_id == instruction.instructor_id)?.last_name},{" "}
-                  {
-                    instructors?.find((instructor) => instructor.user_id == instruction.instructor_id)
-                      ?.educational_attainment
-                  }{" "}
-                  degree,{" "}
-                  {instructors?.find((instructor) => instructor.user_id == instruction.instructor_id)?.finished_school}
+                  {instruction.first_name} {instruction.last_name}
+                  {", "}
+                  {instruction.educational_attainment} degree, {instruction.finished_school}
                 </Text>
                 <Text>
-                  {instruction.grade}, {instruction.type},{" "}
+                  {instruction?.grade
+                    ?.slice(1, -1)
+                    .split(",")
+                    .map((g, index) => (
+                      <span key={index}>
+                        {g && g == "other" && g}
+                        {g && g != "other" && g[0]}
+                        {g && g != "other" && (g[0] == "1" ? "st" : g[0] == "2" ? "nd" : g[0] == "3" ? "rd" : "th")}
+                        {g && g != "other" && (g[1] == "e" ? "-elementry" : g[1] == "h" ? "-high" : "-university")}
+                        {index !== instruction?.grade?.slice(1, -1).split(",").length - 1 && ", "}
+                      </span>
+                    ))}
+                </Text>
+                <Text>
+                  {instruction.type},{" "}
                   {
                     cities?.find(
                       (city) =>
@@ -420,6 +471,14 @@ export default function StudentInstructions({
                 <Text mt="8px" color="#FAE392">
                   {instruction.price} €/h
                 </Text>
+                <Flex mt="16px">
+                  {Array.from({ length: instruction.average_rating }, (_, index) => (
+                    <FaStar key={index} color="#F1C93B" size="24px" />
+                  ))}
+                  {Array.from({ length: 5 - instruction.average_rating }, (_, index) => (
+                    <FaStar key={index} color="#eeeeee" size="24px" />
+                  ))}
+                </Flex>
               </Flex>
             </Flex>
           ))}
@@ -477,23 +536,20 @@ export default function StudentInstructions({
             <Heading mt="16px" size="lg">
               Instruction
             </Heading>
-            <Text>{subjects?.find((subject) => subject.subject_id == info.instruction?.subject_id)?.subject_name}</Text>
+            <Text>{info.instruction?.subject_name}</Text>
             <Text>
-              {info.instruction?.grade && info.instruction?.grade[0]}
-              {info.instruction?.grade &&
-                (info.instruction?.grade[0] == "1"
-                  ? "st"
-                  : info.instruction?.grade[0] == "2"
-                  ? "nd"
-                  : info.instruction?.grade[0] == "3"
-                  ? "rd"
-                  : "th")}
-              {info.instruction?.grade &&
-                (info.instruction?.grade[1] == "e"
-                  ? ", elementry school"
-                  : info.instruction?.grade[1] == "h"
-                  ? ", high school"
-                  : ", university")}
+              {info.instruction?.grade
+                ?.slice(1, -1)
+                .split(",")
+                .map((g, index) => (
+                  <span key={index}>
+                    {g && g == "other" && g}
+                    {g && g != "other" && g[0]}
+                    {g && g != "other" && (g[0] == "1" ? "st" : g[0] == "2" ? "nd" : g[0] == "3" ? "rd" : "th")}
+                    {g && g != "other" && (g[1] == "e" ? "-elementry" : g[1] == "h" ? "-high" : "-university")}
+                    {index !== info.instruction?.grade?.slice(1, -1).split(",").length - 1 && ", "}
+                  </span>
+                ))}
             </Text>
             <Text>{info.instruction?.type}</Text>
             <Text>{info.instruction?.price} €/h</Text>

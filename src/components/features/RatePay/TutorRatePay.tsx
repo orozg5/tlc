@@ -10,7 +10,7 @@ export default function TutorRatePay({ doneTutorTerms, ratedTutor }: IUserProps)
   return (
     <>
       <Flex direction="column" align="center" gap="32px" m="64px">
-        <ButtonGroup mb="32px">
+        <ButtonGroup>
           <Button
             onClick={() => setFilter(0)}
             fontWeight="50px"
@@ -39,6 +39,17 @@ export default function TutorRatePay({ doneTutorTerms, ratedTutor }: IUserProps)
             Feedback
           </Button>
         </ButtonGroup>
+
+        {filter == 0 && (
+          <Text>
+            Total: {doneTutorTerms?.filter((t) => t.payed === false).reduce((sum, term) => sum + term.price, 0)} €
+          </Text>
+        )}
+        {filter == 1 && (
+          <Text>
+            Total: {doneTutorTerms?.filter((t) => t.payed === true).reduce((sum, term) => sum + term.price, 0)} €
+          </Text>
+        )}
 
         {filter == 0 &&
           doneTutorTerms

@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const userData = await getMe(req);
     const id = userData?.id;
 
-    const materials = await query("SELECT materials_students.*, materials.* FROM materials_students JOIN materials ON materials_students.material_id = materials.material_id WHERE materials_students.student_id = $1", [id]);
+    const materials = await query("SELECT materials_students.*, materials.* FROM materials_students JOIN materials ON materials_students.material_id = materials.material_id WHERE materials_students.student_id = $1 AND materials_students.expiry_date >= CURRENT_DATE", [id]);
 
     res.status(200).json(materials.rows);
   } catch (error) {

@@ -1,9 +1,22 @@
 export default interface IInstruction {
+  user_id?:string,
+  first_name?:string,
+  last_name?:string,
+  gender?:string,
+  date_of_birth?:string,
+  city_id?:string,
+  phone?:string,
+  educational_attainment?:string,
+  finished_school?:string,
+  profile_photo?:string,
   instruction_id?: string,
   instructor_id?: string,
   subject_id?: string,
+  subject_name?: string,
   price?: number,
   type?: "online" | "irl" | "other",
+  instructorDescription?: string,
   description?: string,
-  grade?: string
+  grade?: string,
+  average_rating?: any,
 }

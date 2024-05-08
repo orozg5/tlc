@@ -23,6 +23,8 @@ import {
 import { useState } from "react";
 import { BsFiletypeDocx } from "react-icons/bs";
 import {
+  FaEye,
+  FaEyeSlash,
   FaFileAlt,
   FaFileArchive,
   FaFileImage,
@@ -41,6 +43,9 @@ import materialShare from "@/helpers/materialShare";
 import editShareMaterial from "@/helpers/editShareMaterial";
 import editFolder from "@/helpers/editFolder";
 import deleteFolder from "@/helpers/deleteFolder";
+import deleteShareMaterial from "@/helpers/deleteShareMaterial";
+import makeMaterialPublic from "@/helpers/makeMaterialPublic";
+import makeMaterialPrivate from "@/helpers/makeMaterialPrivate";
 
 export default function TutorMaterials({ userData, materials, folders, users, materials_students }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -54,11 +59,14 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
   const [materialId, setMaterialId] = useState("");
   const [name, setName] = useState("");
   const [newName, setNewName] = useState("");
+  const [fileError, setFileError] = useState(false);
+  const [fileNameError, setFileNameError] = useState(false);
 
   const [folderName, setFolderName] = useState("");
   const [newFolderName, setNewFolderName] = useState("");
   const [folderId, setFolderId] = useState("");
   const [path, setPath] = useState("/");
+  const [folderError, setFolderError] = useState(false);
 
   const [shareMaterial, setShareMaterial] = useState(() => {
     return users?.map((u) => ({
@@ -77,6 +85,22 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (file) {
+      setFileError(false);
+      if (file.name && path) {
+        let fileExists = false;
+        materials?.forEach((m) => {
+          if (m.file_name === file.name && m.path === path) {
+            fileExists = true;
+            setFileError(true);
+            return;
+          }
+        });
+
+        if (fileExists) {
+          return;
+        }
+      }
+
       const filename = `${uuidv4()}-${file.name}`;
 
       const { data, error } = await supabase.storage.from("files").upload(filename, file, {
@@ -120,10 +144,12 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
     const { data, error } = await supabase.storage.from("files").remove([filepath]);
     if (data) {
       if (filepath && id) {
-        const res = await deleteMaterial(id);
-        if (res.status === 200) {
-          window.location.reload();
-        }
+        try {
+          const res = await deleteMaterial(id);
+          if (res.status === 200) {
+            window.location.reload();
+          }
+        } catch (error) {}
       }
     }
   };
@@ -132,19 +158,51 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
     if (name && newName && materialId) {
       const parts = name.split(".");
       const extension = parts[parts.length - 1];
-      const res = await editMaterial(materialId, newName + "." + extension);
-      if (res.status === 200) {
-        window.location.reload();
+
+      setFileNameError(false);
+      let fileExists = false;
+      materials?.forEach((m) => {
+        if (m.file_name === newName + "." + extension && m.path === path) {
+          fileExists = true;
+          setFileNameError(true);
+          return;
+        }
+      });
+
+      if (fileExists) {
+        return;
       }
+      try {
+        const res = await editMaterial(materialId, newName + "." + extension);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
     }
   };
 
   const handleFolderEdit = async () => {
+    setFolderError(false);
     if (folderName && newFolderName && folderId && path) {
-      const res = await editFolder(folderId, newFolderName, path, folderName);
-      if (res.status === 200) {
-        window.location.reload();
+      let folderExists = false;
+      folders?.forEach((folder) => {
+        if (folder.folder_name === newFolderName && folder.folder_path === path) {
+          folderExists = true;
+          setFolderError(true);
+          return;
+        }
+      });
+
+      if (folderExists) {
+        return;
       }
+
+      try {
+        const res = await editFolder(folderId, newFolderName, path, folderName);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
     }
   };
 
@@ -153,15 +211,32 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
   };
 
   const handleNewFolder = async () => {
+    setFolderError(false);
     if (path && userData?.id && folderName) {
-      const res = await addFolder({
-        instructor_id: userData?.id,
-        folder_name: folderName,
-        folder_path: path,
+      let folderExists = false;
+      folders?.forEach((folder) => {
+        if (folder.folder_name === folderName && folder.folder_path === path) {
+          folderExists = true;
+          setFolderError(true);
+          return;
+        }
       });
-      if (res.status === 200) {
-        window.location.reload();
+
+      if (folderExists) {
+        return;
       }
+
+      try {
+        const res = await addFolder({
+          instructor_id: userData?.id,
+          folder_name: folderName,
+          folder_path: path,
+        });
+
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
     }
   };
 
@@ -174,29 +249,67 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
 
   const handleShareSubmit = async () => {
     if (materialId && shareMaterial) {
-      const res = await materialShare(materialId, shareMaterial);
-      if (res.status === 200) {
-        window.location.reload();
-      }
+      try {
+        const res = await materialShare(materialId, shareMaterial);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
     }
   };
 
   const handleEditShare = async () => {
     if (editShare.id && editShare.date) {
-      const res = await editShareMaterial(editShare.id, editShare.date);
-      if (res.status === 200) {
-        window.location.reload();
-      }
+      try {
+        const res = await editShareMaterial(editShare.id, editShare.date);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
     }
   };
 
   const handleDeleteFolder = async () => {
     if (folderName && path && folderId) {
       let sendPath = path.split("/").join("***");
-      const res = await deleteFolder(folderName, sendPath, folderId);
-      if (res.status === 200) {
-        window.location.reload();
-      }
+      try {
+        const res = await deleteFolder(folderName, sendPath, folderId);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
+    }
+  };
+
+  const deleteSharing = async () => {
+    if (editShare.id) {
+      try {
+        const res = await deleteShareMaterial(editShare.id);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
+    }
+  };
+
+  const makePublic = async (id: string) => {
+    if (id) {
+      try {
+        const res = await makeMaterialPublic(id);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
+    }
+  };
+  const makePrivate = async (id: string) => {
+    if (id) {
+      try {
+        const res = await makeMaterialPrivate(id);
+        if (res.status === 200) {
+          window.location.reload();
+        }
+      } catch (error) {}
     }
   };
 
@@ -222,6 +335,7 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
             Upload
           </Button>
         </Flex>
+        {fileError && <Text color="#8A1414">This file name already exists.</Text>}
         <Button
           onClick={onCFOpen}
           w="200px"
@@ -232,7 +346,7 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
           Create new folder
         </Button>
         {path !== "/" && (
-          <Flex align="center">
+          <Flex mt="16px" align="center">
             <Text onClick={goBack} _hover={{ cursor: "pointer" }}>
               <IoReturnUpBack size="28px" color="#eeeeee" />
             </Text>
@@ -332,6 +446,24 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
               </Flex>
               <Flex color="#183D3D" align="center" gap="8px">
                 <Text _hover={{ cursor: "pointer", color: "#040D12" }}>
+                  {!m.is_public && (
+                    <FaEyeSlash
+                      onClick={() => {
+                        makePublic(m.material_id || "");
+                      }}
+                      size="22px"
+                    />
+                  )}
+                  {m.is_public && (
+                    <FaEye
+                      onClick={() => {
+                        makePrivate(m.material_id || "");
+                      }}
+                      size="22px"
+                    />
+                  )}
+                </Text>
+                <Text _hover={{ cursor: "pointer", color: "#040D12" }}>
                   <RiUserSharedLine
                     onClick={() => {
                       setMaterialId(m.material_id || "");
@@ -374,6 +506,11 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
               _hover={{ borderColor: "#5C8374" }}
               focusBorderColor="#040D12"
             />
+            {fileNameError && (
+              <Text mt="16px" color="#8A1414">
+                This file name already exists.
+              </Text>
+            )}
             <Flex mb="16px" mt="16px" gap="8px" justify="center">
               <Button
                 onClick={() => {
@@ -413,6 +550,11 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
               _hover={{ borderColor: "#5C8374" }}
               focusBorderColor="#040D12"
             />
+            {folderError && (
+              <Text mt="16px" color="#8A1414">
+                This folder name already exists.
+              </Text>
+            )}
             <Flex mb="16px" mt="16px" gap="8px" justify="center">
               <Button
                 onClick={() => {
@@ -452,6 +594,11 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
               _hover={{ borderColor: "#5C8374" }}
               focusBorderColor="#040D12"
             />
+            {folderError && (
+              <Text mt="16px" color="#8A1414">
+                This folder name already exists.
+              </Text>
+            )}
             <Flex mb="16px" mt="16px" gap="8px" justify="center">
               <Button
                 onClick={() => {
@@ -565,7 +712,17 @@ export default function TutorMaterials({ userData, materials, folders, users, ma
             <ModalHeader>
               Edit expiry date of {name} for {editShare.student_name}
             </ModalHeader>
-            <Text mt="8px">Change date from {editShare.old_date} to:</Text>
+            <Button
+              mt="8px"
+              onClick={deleteSharing}
+              bgColor="#183D3D"
+              color="#eeeeee"
+              _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+            >
+              Stop sharing
+            </Button>
+            <Text>or</Text>
+            <Text>Change date from {editShare.old_date} to:</Text>
             <Input
               type="date"
               onChange={(e) => setEditShare({ ...editShare, date: e.target.value })}

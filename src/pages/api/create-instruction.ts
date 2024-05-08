@@ -15,9 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { instructor_id, subject_id, price, type, description, grade } = req.body;
 
+    const grades = grade.map((g: { label: string; value: string; }) => g.value);
+
     await query(
       `INSERT INTO instructions (instructor_id, subject_id, price, type, description, grade) VALUES ($1, $2, $3, $4, $5, $6)`,
-      [instructor_id, subject_id, price, type, description, grade]
+      [instructor_id, subject_id, price, type, description, grades]
     );
 
     res.status(200).json({ message: "Instruction created successfully." });

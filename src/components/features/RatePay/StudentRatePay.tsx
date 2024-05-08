@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ButtonGroup,
   Flex,
@@ -19,9 +20,11 @@ import { FaStar } from "react-icons/fa";
 import { convertDateTime } from "@/utils/convertDateTime";
 import addRating from "@/helpers/addRating";
 import IUserProps from "@/interfaces/IUserProps";
+import cancelRating from "@/helpers/cancelRating";
 
 export default function StudentRatePay({ userData, doneTerms, rated }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isCancelOpen, onOpen: onCancelOpen, onClose: onCancelClose } = useDisclosure();
   const [rating, setRating] = useState({
     term_id: "",
     subject: "",
@@ -32,6 +35,7 @@ export default function StudentRatePay({ userData, doneTerms, rated }: IUserProp
     comment: "",
     date: new Date(),
   });
+  const [termId, setTermId] = useState("");
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState(0);
 
@@ -47,6 +51,15 @@ export default function StudentRatePay({ userData, doneTerms, rated }: IUserProp
     } else {
       setError(true);
     }
+  };
+
+  const cancelTheRating = async () => {
+    try {
+      const res = await cancelRating(termId);
+      if (res.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {}
   };
 
   return (
@@ -102,28 +115,44 @@ export default function StudentRatePay({ userData, doneTerms, rated }: IUserProp
                 </Text>
                 <ButtonGroup mt="64px">
                   {!t.rated && (
-                    <Button
+                    <Flex
                       fontWeight="50px"
                       bgColor="#183D3D"
                       color="#eeeeee"
-                      _hover={{ bgColor: "#5C8374", color: "#040D12" }}
-                      onClick={() => {
-                        setRating({
-                          term_id: t.term_id,
-                          student_id: userData?.id,
-                          subject: t.subject_name,
-                          instructor_id: t?.user_id,
-                          instructor_name: t.first_name + " " + t.last_name,
-                          rate: 0,
-                          comment: "",
-                          date: new Date(),
-                        });
-                        setError(false);
-                        onOpen();
-                      }}
+                      align="center"
+                      p="8px"
+                      borderRadius="6px"
+                      gap="8px"
                     >
-                      Rate
-                    </Button>
+                      <Text
+                        _hover={{ cursor: "pointer", color: "gray.300" }}
+                        onClick={() => {
+                          setRating({
+                            term_id: t.term_id,
+                            student_id: userData?.id,
+                            subject: t.subject_name,
+                            instructor_id: t?.user_id,
+                            instructor_name: t.first_name + " " + t.last_name,
+                            rate: 0,
+                            comment: "",
+                            date: new Date(),
+                          });
+                          setError(false);
+                          onOpen();
+                        }}
+                      >
+                        Rate
+                      </Text>
+                      <Text
+                        _hover={{ cursor: "pointer", color: "gray.300" }}
+                        onClick={() => {
+                          setTermId(t.term_id);
+                          onCancelOpen();
+                        }}
+                      >
+                        X
+                      </Text>
+                    </Flex>
                   )}
                   {!t.payed && (
                     <Button bgColor="#F1C93B" color="#040D12" _hover={{ bgColor: "#FAE392", color: "gray.500" }}>
@@ -238,6 +267,37 @@ export default function StudentRatePay({ userData, doneTerms, rated }: IUserProp
               }}
             >
               Submit
+            </Button>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isCancelOpen} onClose={onCancelClose}>
+        <ModalOverlay bg="blackAlpha.800" />
+        <ModalContent color="#040D12" bg="#93B1A6">
+          <ModalCloseButton />
+          <ModalBody textAlign="center">
+            <ModalHeader>Are you sure you don't want to rate your tutor?</ModalHeader>
+            <Button
+              mt="16px"
+              mb="16px"
+              bgColor="#183D3D"
+              color="#eeeeee"
+              _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+              onClick={onCancelClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              ml="8px"
+              mt="16px"
+              mb="16px"
+              bgColor="#F1C93B"
+              color="#040D12"
+              _hover={{ bgColor: "#FAE392", color: "gray.500" }}
+              onClick={cancelTheRating}
+            >
+              Yes
             </Button>
           </ModalBody>
         </ModalContent>

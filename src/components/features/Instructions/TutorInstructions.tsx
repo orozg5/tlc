@@ -3,6 +3,7 @@ import deleteInstruction from "@/helpers/deleteInstruction";
 import editInstruction from "@/helpers/editInstruction";
 import IInstruction from "@/interfaces/IInstruction";
 import IUserProps from "@/interfaces/IUserProps";
+import { multiSelectStyle } from "@/styles/multiselect";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -26,9 +27,10 @@ import {
   Textarea,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { RxCross1 } from "react-icons/rx";
+import ReactSelect from "react-select";
 
 export default function TutorInstructions({ userData, userInstructions, subjects }: IUserProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -50,8 +52,16 @@ export default function TutorInstructions({ userData, userInstructions, subjects
     setInstruction({ ...instruction, [e.target.id]: e.target.value });
   };
 
+  const handleSelectChange = (selectedValues: any) => {
+    setInstruction({ ...instruction, grade: selectedValues });
+  };
+
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setEditInstr({ ...editInstr, [e.target.id]: e.target.value });
+  };
+
+  const handleEditSelectChange = (selectedValues: any) => {
+    setEditInstr({ ...editInstr, grade: selectedValues });
   };
 
   const editI = async () => {
@@ -92,7 +102,7 @@ export default function TutorInstructions({ userData, userInstructions, subjects
     } catch (error) {}
   };
 
-  const confirmDelete = async() => {
+  const confirmDelete = async () => {
     if (id) {
       try {
         const res = await deleteInstruction(id);
@@ -101,7 +111,29 @@ export default function TutorInstructions({ userData, userInstructions, subjects
         }
       } catch (error) {}
     }
-  }
+  };
+
+  const options = [
+    { value: "1e", label: "1st, elementary" },
+    { value: "2e", label: "2nd, elementary" },
+    { value: "3e", label: "3rd, elementary" },
+    { value: "4e", label: "4th, elementary" },
+    { value: "5e", label: "5th, elementary" },
+    { value: "6e", label: "6th, elementary" },
+    { value: "7e", label: "7th, elementary" },
+    { value: "8e", label: "8th, elementary" },
+    { value: "1h", label: "1st, high school" },
+    { value: "2h", label: "2nd, high school" },
+    { value: "3h", label: "3rd, high school" },
+    { value: "4h", label: "4th, high school" },
+    { value: "1u", label: "1st, university" },
+    { value: "2u", label: "2nd, university" },
+    { value: "3u", label: "3rd, university" },
+    { value: "4u", label: "4th, university" },
+    { value: "5u", label: "5th, university" },
+    { value: "6u", label: "6th, university" },
+    { value: "other", label: "other" },
+  ];
 
   return (
     <Flex mt="64px" mb="64px" justify="center" align="center" direction="column">
@@ -148,17 +180,29 @@ export default function TutorInstructions({ userData, userInstructions, subjects
               >
                 <FiEdit3 />
               </Button>
-              <Button onClick={() => {setId(i?.instruction_id || ""); onOpenDelete();}} _hover={{ color: "#040D12" }} variant="unstyled">
+              <Button
+                onClick={() => {
+                  setId(i?.instruction_id || "");
+                  onOpenDelete();
+                }}
+                _hover={{ color: "#040D12" }}
+                variant="unstyled"
+              >
                 <RxCross1 />
               </Button>
             </Flex>
             <Heading>{subjects?.find((subject) => subject.subject_id == i.subject_id)?.subject_name}</Heading>
-            <Text mt="4px">
-              {i.grade && i.grade[0]}
-              {i.grade && (i.grade[0] == "1" ? "st" : i.grade[0] == "2" ? "nd" : i.grade[0] == "3" ? "rd" : "th")}
-              {i.grade &&
-                (i.grade[1] == "e" ? ", elementry school" : i.grade[1] == "h" ? ", high school" : ", university")}
-              , {i.type}
+            <Text>
+              {i?.grade?.slice(1, -1).split(",").map((g, index) => (
+                <span key={index}>
+                  {g && g == "other" && g}
+                  {g && g != "other" && g[0]}
+                  {g && g != "other" && (g[0] == "1" ? "st" : g[0] == "2" ? "nd" : g[0] == "3" ? "rd" : "th")}
+                  {g && g != "other" && (g[1] == "e" ? "-elementry" : g[1] == "h" ? "-high" : "-university")}
+                  {g && ", "}
+                </span>
+              ))}
+              {i.type}
             </Text>
             <Text mt="8px" w={{ base: "264px", sm: "400px", md: "632px" }}>
               {i.description}
@@ -193,34 +237,13 @@ export default function TutorInstructions({ userData, userInstructions, subjects
               </Select>
 
               <Text mt="16px">Grade</Text>
-              <Select
+              <ReactSelect
                 id="grade"
-                onChange={handleInstructionChange}
-                w="264px"
-                borderColor="#040D12"
-                _hover={{ borderColor: "#5C8374" }}
-                focusBorderColor="#040D12"
-              >
-                <option value="1e">1st, elementary</option>
-                <option value="2e">2st, elementary</option>
-                <option value="3e">3rd, elementary</option>
-                <option value="4e">4th, elementary</option>
-                <option value="5e">5th, elementary</option>
-                <option value="6e">6th, elementary</option>
-                <option value="7e">7th, elementary</option>
-                <option value="8e">8th, elementary</option>
-                <option value="1h">1st, high school</option>
-                <option value="2h">2st, high school</option>
-                <option value="3h">3rd, high school</option>
-                <option value="4h">4th, high school</option>
-                <option value="1u">1st, university</option>
-                <option value="2u">2st, university</option>
-                <option value="3u">3rd, university</option>
-                <option value="4u">4th, university</option>
-                <option value="5u">5th, university</option>
-                <option value="6u">6th, university</option>
-                <option value="other">other</option>
-              </Select>
+                options={options}
+                isMulti
+                onChange={handleSelectChange}
+                styles={multiSelectStyle}
+              />
 
               <Text mt="16px">Type</Text>
               <Select
@@ -310,35 +333,13 @@ export default function TutorInstructions({ userData, userInstructions, subjects
               </Select>
 
               <Text mt="16px">Grade</Text>
-              <Select
+              <ReactSelect
                 id="grade"
-                onChange={handleEditChange}
-                value={editInstr.grade}
-                w="264px"
-                borderColor="#040D12"
-                _hover={{ borderColor: "#5C8374" }}
-                focusBorderColor="#040D12"
-              >
-                <option value="1e">1st, elementary</option>
-                <option value="2e">2st, elementary</option>
-                <option value="3e">3rd, elementary</option>
-                <option value="4e">4th, elementary</option>
-                <option value="5e">5th, elementary</option>
-                <option value="6e">6th, elementary</option>
-                <option value="7e">7th, elementary</option>
-                <option value="8e">8th, elementary</option>
-                <option value="1h">1st, high school</option>
-                <option value="2h">2st, high school</option>
-                <option value="3h">3rd, high school</option>
-                <option value="4h">4th, high school</option>
-                <option value="1u">1st, university</option>
-                <option value="2u">2st, university</option>
-                <option value="3u">3rd, university</option>
-                <option value="4u">4th, university</option>
-                <option value="5u">5th, university</option>
-                <option value="6u">6th, university</option>
-                <option value="other">other</option>
-              </Select>
+                options={options}
+                isMulti
+                onChange={handleEditSelectChange}
+                styles={multiSelectStyle}
+              />
 
               <Text mt="16px">Type</Text>
               <Select
