@@ -5,4 +5,5 @@ export default interface IMaterial {
   file_url: string;
   file_name: string;
   path: string;
+  subject_id?: string;
 }

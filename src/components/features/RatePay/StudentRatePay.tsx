@@ -67,15 +67,13 @@ export default function StudentRatePay({ userData, doneTerms, rated }: IUserProp
   const handlePay = async (productId: string, price: number, productName: string) => {
     try {
       const session = await createCheckoutSession(productId, price, productName);
-      if (session){
+      if (session) {
         const res = await payTutor(productId);
         if (res.status === 200) {
           window.location.href = session.url;
         }
       }
-    } catch (error) {
-      console.error("Error creating Checkout Session:", error);
-    }
+    } catch (error) {}
   };
 
   return (

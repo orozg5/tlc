@@ -3,20 +3,20 @@ import { query } from "@/lib/postgres";
 
 /**
  * @swagger
- * /api/get-tutor-terms:
+ * /api/get-instruction-materials:
  *   get:
  *     responses:
  *       200:
- *         description: Successfully got tutor terms.
+ *         description: Successfully got instruction materials.
  *       500:
  *         description: Internal server error.
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { id } = req.query;
-    const terms = await query("SELECT * FROM terms WHERE instructor_id = $1 and (reserved = $2 or is_public = $3)", [id, false, true]);
+    const materials = await query("SELECT * FROM materials WHERE instructor_id = $1 AND is_public = $2", [id, true]);
 
-    res.status(200).json(terms.rows);
+    res.status(200).json(materials.rows);
   } catch (error) {
     res.status(500).json({ message: "Internal server error." });
   }

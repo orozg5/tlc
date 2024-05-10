@@ -25,7 +25,7 @@ export const createCheckoutSession = async (productId: string, price: number, pr
       id: session.id,
       url: session.url,
     };
-  } catch (error) {
+  } catch (error: any) {
     throw new Error('Error creating Checkout Session: ' + error.message);
   }
 };

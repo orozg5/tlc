@@ -28,8 +28,18 @@ import {
 } from "@chakra-ui/react";
 import FullCalendar from "@fullcalendar/react";
 import React, { useRef, useEffect, useState } from "react";
-import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
-import { FaGenderless, FaStar } from "react-icons/fa";
+import { BsFiletypeDocx, BsGenderFemale, BsGenderMale } from "react-icons/bs";
+import {
+  FaFileAlt,
+  FaFileArchive,
+  FaFileImage,
+  FaFilePowerpoint,
+  FaGenderless,
+  FaRegFile,
+  FaRegFileExcel,
+  FaRegFilePdf,
+  FaStar,
+} from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
 import { LuCake } from "react-icons/lu";
 import { MdOutlineLocalPhone } from "react-icons/md";
@@ -45,6 +55,18 @@ import reserveTerm from "@/helpers/reserveTerm";
 import termConvertor from "@/utils/termConvertor";
 import { getTimeDifference } from "@/utils/getTimeDifference";
 import { useRouter } from "next/navigation";
+import getInstructionMaterials from "@/helpers/getInstructionMaterials";
+import IMaterial from "@/interfaces/IMaterial";
+import { getExtension } from "@/utils/getExtension";
+import { supabase } from "@/lib/supabase";
+
+interface IEvent {
+  id: string;
+  start: string;
+  end: string;
+  backgroundColor: string;
+  textColor: string;
+}
 
 export default function StudentInstructions({
   userData,
@@ -58,10 +80,11 @@ export default function StudentInstructions({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
   const { isOpen: isOpenReserve, onOpen: onOpenReserve, onClose: onCloseReserve } = useDisclosure();
+  const { isOpen: isOpenMaterials, onOpen: onOpenMaterials, onClose: onCloseMaterials } = useDisclosure();
   const cancelRef = useRef(null);
 
   const [reserve, setReserve] = useState({ term: "", id: "" });
-  const [events, setEvents] = useState<{ start: string; end: string }[]>([]);
+  const [events, setEvents] = useState<IEvent[]>();
   const [theTerms, setTheTerms] = useState<ITerm[]>();
   const [filter, setFilter] = useState({
     subject_id: "",
@@ -78,6 +101,8 @@ export default function StudentInstructions({
     instruction: {},
   });
 
+  const [materials, setMaterials] = useState<IMaterial[]>();
+
   useEffect(() => {
     if (theTerms) {
       const theEvents = theTerms?.map((t) => {
@@ -86,16 +111,29 @@ export default function StudentInstructions({
         endDate.setMinutes(endDate.getMinutes() + t.duration_min);
         const end = convertDateTime(endDate);
 
-        return { id: t.term_id, start: start, end: end };
+        let backgroundColor = "#183d3d";
+        let color = "#eeeeee";
+        if (t.reserved) {
+          backgroundColor = "#F1C93B";
+          color = "#040D12";
+        }
+
+        return {
+          id: t.term_id,
+          start: start,
+          end: end,
+          backgroundColor: backgroundColor,
+          textColor: color,
+        };
       });
       setEvents(theEvents);
     }
   }, [theTerms]);
 
-  const getTutorCalendar = async () => {
+  const getTutorCalendar = async (user_id: string) => {
     try {
-      if (info.instructor.user_id) {
-        const res = await getTutorTerms(info.instructor.user_id);
+      if (user_id) {
+        const res = await getTutorTerms(user_id);
         if (res.status === 200) {
           setTheTerms(res.data);
         }
@@ -121,8 +159,17 @@ export default function StudentInstructions({
   };
 
   const handleEventClick = async (eventClickInfo: any) => {
+    let reserved = false;
+    theTerms?.find((t) => {
+      if (t.term_id == eventClickInfo.event.id) {
+        reserved = t.reserved;
+      }
+    });
+
     if (!userData?.id) {
       router.push("/signin");
+    } else if (reserved) {
+      return;
     } else {
       const term = termConvertor(eventClickInfo);
       if (getTimeDifference(term)) {
@@ -157,11 +204,37 @@ export default function StudentInstructions({
         };
         const res = await reserveTerm(data);
         if (res.status === 200) {
-          getTutorCalendar();
+          getTutorCalendar(info.instructor.user_id);
           onCloseReserve();
         }
       }
     } catch (error) {}
+  };
+
+  const tutorMaterials = async (user_id: string) => {
+    try {
+      if (user_id) {
+        const res = await getInstructionMaterials(user_id);
+        if (res) {
+          setMaterials(res);
+        }
+      }
+    } catch (error) {}
+  };
+
+  const downloadFile = async (filename: string, filepath: string) => {
+    const { data, error } = await supabase.storage.from("files").download(filepath);
+    if (data) {
+      const blob = new Blob([data]);
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   return (
@@ -385,7 +458,11 @@ export default function StudentInstructions({
           ?.filter(
             (i) =>
               (filter.subject_id === "" || i.subject_id === filter.subject_id) &&
-              (filter.grade === "" || i.grade === filter.grade) &&
+              (filter.grade === "" ||
+                i.grade
+                  ?.slice(1, -1)
+                  .split(",")
+                  .find((instr) => instr === filter.grade)) &&
               (filter.type === "" || i.type === filter.type) &&
               (filter.price === "" || i.price === Number(filter.price)) &&
               (filter.city_id === "" ||
@@ -409,6 +486,7 @@ export default function StudentInstructions({
               onClick={() => {
                 setInfo({
                   instructor: {
+                    user_id: instruction.instructor_id,
                     first_name: instruction.first_name,
                     last_name: instruction.last_name,
                     gender: instruction.gender,
@@ -555,24 +633,40 @@ export default function StudentInstructions({
             <Text>{info.instruction?.price} €/h</Text>
             <Text mt="16px">{info.instruction?.description}</Text>
 
-            <Button
-              mt="16px"
-              bg="#183D3D"
-              color="#eeeeee"
-              fontWeight="50px"
-              _hover={{ bg: "#5C8374", color: "#040D12" }}
-              onClick={() => {
-                getTutorCalendar();
-                onOpenCalendar();
-              }}
-            >
-              Check Tutor Calendar
-            </Button>
+            <Flex direction="column" align="center" justify="center">
+              <Button
+                mt="16px"
+                bg="#183D3D"
+                color="#eeeeee"
+                fontWeight="50px"
+                _hover={{ bg: "#5C8374", color: "#040D12" }}
+                onClick={() => {
+                  tutorMaterials(info.instructor.user_id || "");
+                  onOpenMaterials();
+                }}
+              >
+                Materials
+              </Button>
+
+              <Button
+                mt="16px"
+                bg="#183D3D"
+                color="#eeeeee"
+                fontWeight="50px"
+                _hover={{ bg: "#5C8374", color: "#040D12" }}
+                onClick={() => {
+                  getTutorCalendar(info.instructor.user_id || "");
+                  onOpenCalendar();
+                }}
+              >
+                Check Tutor Calendar
+              </Button>
+            </Flex>
           </ModalBody>
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={{ base: "md", md: "xl" }}>
+      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={{ base: "md", md: "2xl", lg: "4xl" }}>
         <ModalOverlay bg="blackAlpha.700" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalCloseButton />
@@ -640,6 +734,49 @@ export default function StudentInstructions({
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      <Modal isOpen={isOpenMaterials} onClose={onCloseMaterials} size={{ base: "md", md: "xl" }}>
+        <ModalOverlay bg="blackAlpha.700" />
+        <ModalContent color="#040D12" bg="#93B1A6">
+          <ModalCloseButton />
+          <ModalBody>
+            <Heading size="lg">Materials</Heading>
+            <Flex direction="column" gap="16px" mt="16px" mb="16px">
+              {materials?.map((m) => (
+                <Flex align="center" gap="8px">
+                  {getExtension(m.file_name) == "pdf" ? (
+                    <FaRegFilePdf size="28px" color="#183D3D" />
+                  ) : getExtension(m.file_name) == "docx" ? (
+                    <BsFiletypeDocx size="28px" color="#183D3D" />
+                  ) : getExtension(m.file_name) == "xlsx" ? (
+                    <FaRegFileExcel size="28px" color="#183D3D" />
+                  ) : getExtension(m.file_name) == "png" ||
+                    getExtension(m.file_name) == "jpg" ||
+                    getExtension(m.file_name) == "jpeg" ? (
+                    <FaFileImage size="28px" color="#183D3D" />
+                  ) : getExtension(m.file_name) == "zip" ? (
+                    <FaFileArchive size="28px" color="#183D3D" />
+                  ) : getExtension(m.file_name) == "pptx" ? (
+                    <FaFilePowerpoint size="28px" color="#183D3D" />
+                  ) : getExtension(m.file_name) == "txt" ? (
+                    <FaFileAlt size="28px" color="#183D3D" />
+                  ) : (
+                    <FaRegFile size="28px" color="#183D3D" />
+                  )}
+                  <Text
+                    w={{ base: "100px", sm: "200px", md: "400px", lg: "600px" }}
+                    onClick={() => downloadFile(m.file_name, m.file_url)}
+                    _hover={{ cursor: "pointer", color: "#040D12" }}
+                    color="#183D3D"
+                  >
+                    {m.file_name}
+                  </Text>
+                </Flex>
+              ))}
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }

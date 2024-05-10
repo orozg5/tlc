@@ -7,4 +7,5 @@ export default interface ITerm {
   duration_min: number;
   description: string;
   reserved: boolean;
+  is_public: boolean;
 };

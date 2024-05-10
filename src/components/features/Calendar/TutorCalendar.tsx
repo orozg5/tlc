@@ -40,6 +40,7 @@ import { footerToolbarConst } from "@/consts/footerToolbarConst";
 import deleteTerm from "@/helpers/deleteTerm";
 import { getTimeDifference } from "@/utils/getTimeDifference";
 import cancelTerm from "@/helpers/cancelTerm";
+import makeTermPublicOrPrivate from "@/helpers/makeTermPublicOrPrivate";
 
 interface IEvent {
   id: string;
@@ -48,6 +49,7 @@ interface IEvent {
   end: string;
   backgroundColor: string;
   textColor: string;
+  is_public: boolean;
 }
 
 export default function TutorCalendar({ userData, myTerms, subjects, allInstructions, students }: IUserProps) {
@@ -68,6 +70,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     student_name: "",
     student_id: "",
     description: "",
+    is_public: false,
   });
   const [term, setTerm] = useState({
     instructor_id: userData?.id || "",
@@ -108,6 +111,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
           end: end,
           backgroundColor: backgroundColor,
           textColor: color,
+          is_public: t.is_public
         };
       });
 
@@ -194,12 +198,14 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
     let subject_id = "";
     let subject_name = "";
     let student_name = "";
+    let isPublic = false;
 
     myTerms?.find((t) => {
       if (t.term_id == eventClickInfo.event.id) {
         student_id = t.student_id || "";
         instruction_id = t.instruction_id || "";
-        description = t.description || "";
+        description = t.description;
+        isPublic = t.is_public;
       }
     });
     allInstructions?.find((i) => {
@@ -220,6 +226,7 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
       student_name: student_name,
       student_id: student_id,
       description: description,
+      is_public: isPublic
     });
 
     if (subject_name && student_name) {
@@ -303,6 +310,15 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
       }
     } catch (error) {}
   };
+
+  const publicPrivateTerm = async () => {
+    try {
+      const res = await makeTermPublicOrPrivate(eventInfo.id);
+      if (res.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {}
+  }
 
   return (
     <Flex justify="center" p={{ base: "8px", md: "64px" }}>
@@ -460,15 +476,27 @@ export default function TutorCalendar({ userData, myTerms, subjects, allInstruct
             <Text mt="8px" mb="16px">
               {eventInfo.description}
             </Text>
-            <Button
-              onClick={handleCancel}
-              mb="16px"
-              bgColor="#183D3D"
-              color="#eeeeee"
-              _hover={{ bgColor: "#5C8374", color: "#040D12" }}
-            >
-              Cancel
-            </Button>
+            <Flex gap="8px" justify="center">
+              <Button
+                onClick={publicPrivateTerm}
+                bgColor="#183D3D"
+                color="#eeeeee"
+                _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                fontWeight="50px"
+              >
+                Make {eventInfo.is_public ? "private" : "public"}
+              </Button>
+              <Button
+                onClick={handleCancel}
+                mb="16px"
+                bgColor="#F1C93B"
+                _hover={{ bgColor: "#FAE392", color: "#183D3D" }}
+                color="#040D12"
+                fontWeight="50px"
+              >
+                Cancel Term
+              </Button>
+            </Flex>
           </ModalBody>
         </ModalContent>
       </Modal>
