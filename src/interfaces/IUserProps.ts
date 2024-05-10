@@ -12,6 +12,7 @@ import IMaterialStudent from "./IMaterialStudent";
 import IStudentsMaterial from "./IStudentsMaterial";
 import IDoneTerm from "./IDoneTerm";
 import IRated from "./IRated";
+import IComment from "./IComment";
 
 export default interface IUserProps {
   userData?: IUser;
@@ -35,4 +36,6 @@ export default interface IUserProps {
   doneTutorTerms?: IDoneTerm[];
   rated?: IRated[];
   ratedTutor?: IRated[];
+  myStudents?: IStudent[];
+  myComments?: IComment[];
 }

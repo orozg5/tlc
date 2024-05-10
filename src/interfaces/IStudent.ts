@@ -9,4 +9,5 @@ export default interface IStudent {
   profile_photo?: string;
   school?: string;
   grade?: string;
+  city_name?: string;
 }

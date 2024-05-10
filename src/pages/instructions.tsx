@@ -4,11 +4,14 @@ import Header from "@/components/shared/Header";
 import RegHeader from "@/components/shared/RegHeader";
 import getAllInstructions from "@/helpers/getAllInstructions";
 import getCities from "@/helpers/getCities";
+import getComments from "@/helpers/getComments";
 import getCurrentUserInfo from "@/helpers/getCurrentUserInfo";
 import getCurrentUserInstructions from "@/helpers/getCurrentUserInstructions";
 import getInstructors from "@/helpers/getInstructors";
+import getMyStudents from "@/helpers/getMyStudents";
 import getSubjects from "@/helpers/getSubjects";
 import getTerms from "@/helpers/getTerms";
+import getTutorStudents from "@/helpers/getTutorStudents";
 import IUserProps from "@/interfaces/IUserProps";
 import { getMe } from "@/utils/getMe";
 import { GetServerSideProps } from "next";
@@ -22,12 +25,20 @@ export default function instructions({
   allInstructions,
   instructors,
   terms,
+  myStudents,
+  myComments,
 }: IUserProps) {
   return (
     <>
       {userData?.id && <RegHeader userData={userData} />}
       {userData?.role == "tutor" && (
-        <TutorInstructions userData={userData} userInstructions={userInstructions} subjects={subjects} />
+        <TutorInstructions
+          userData={userData}
+          userInstructions={userInstructions}
+          subjects={subjects}
+          myStudents={myStudents}
+          myComments={myComments}
+        />
       )}
       {userData?.role == "student" && (
         <StudentInstructions
@@ -61,7 +72,7 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
 
   let userData = null;
   let userInstructions = null;
-  if (session){
+  if (session) {
     userData = await getCurrentUserInfo(req);
     userInstructions = await getCurrentUserInstructions(req);
   }
@@ -70,6 +81,8 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
   const allInstructions = await getAllInstructions();
   const instructors = await getInstructors();
   const terms = await getTerms();
+  const myStudents = await getTutorStudents(req);
+  const myComments = await getComments(req);
 
   return {
     props: {
@@ -80,6 +93,8 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
       allInstructions,
       instructors,
       terms,
+      myStudents,
+      myComments,
     },
   };
 };
