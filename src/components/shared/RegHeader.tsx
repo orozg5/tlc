@@ -36,43 +36,54 @@ export default function RegHeader({ userData }: IUserProps) {
               Home
             </Text>
           </Link>
-          <Link href="/forum">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
-              Forum
-            </Text>
-          </Link>
-          <Link href="/instructions">
-            <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
-              Instructions
-            </Text>
-          </Link>
-          <Link href="/materials">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
-              Materials
-            </Text>
-          </Link>
-          <Link href="/calendar">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
-              Calendar
-            </Text>
-          </Link>
-          <Link href="/chat">
-            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
-              Chat
-            </Text>
-          </Link>
-          <Link href="/rate-pay">
-            {userData?.role == "student" && (
-              <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
-                Rate & Pay
+          {userData?.role == "admin" && (
+            <Link href="/news">
+              <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
+                News
               </Text>
-            )}
-            {userData?.role == "tutor" && (
-              <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
-                Feedback & Payments
-              </Text>
-            )}
-          </Link>
+            </Link>
+          )}
+          {userData?.role != "admin" && (
+            <>
+              <Link href="/forum">
+                <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
+                  Forum
+                </Text>
+              </Link>
+              <Link href="/instructions">
+                <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
+                  Instructions
+                </Text>
+              </Link>
+              <Link href="/materials">
+                <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
+                  Materials
+                </Text>
+              </Link>
+              <Link href="/calendar">
+                <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
+                  Calendar
+                </Text>
+              </Link>
+              <Link href="/chat">
+                <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12" }}>
+                  Chat
+                </Text>
+              </Link>
+              <Link href="/rate-pay">
+                {userData?.role == "student" && (
+                  <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
+                    Rate & Pay
+                  </Text>
+                )}
+                {userData?.role == "tutor" && (
+                  <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
+                    Feedback & Payments
+                  </Text>
+                )}
+              </Link>
+            </>
+          )}
         </Show>
       </Flex>
 
@@ -92,21 +103,30 @@ export default function RegHeader({ userData }: IUserProps) {
               <MenuItem as="a" href="/home">
                 Home
               </MenuItem>
-              <MenuItem as="a" href="/forum">
-                Forum
-              </MenuItem>
-              <MenuItem as="a" href="/instructions">
-                Instructions
-              </MenuItem>
-              <MenuItem as="a" href="/materials">
-                Materials
-              </MenuItem>
-              <MenuItem as="a" href="/calendar">
-                Calendar
-              </MenuItem>
-              <MenuItem as="a" href="/chat">
-                Chat
-              </MenuItem>
+              {userData?.role == "admin" && (
+                <MenuItem as="a" href="/news">
+                  News
+                </MenuItem>
+              )}
+              {userData?.role != "admin" && (
+                <>
+                  <MenuItem as="a" href="/forum">
+                    Forum
+                  </MenuItem>
+                  <MenuItem as="a" href="/instructions">
+                    Instructions
+                  </MenuItem>
+                  <MenuItem as="a" href="/materials">
+                    Materials
+                  </MenuItem>
+                  <MenuItem as="a" href="/calendar">
+                    Calendar
+                  </MenuItem>
+                  <MenuItem as="a" href="/chat">
+                    Chat
+                  </MenuItem>
+                </>
+              )}
               {userData?.role == "student" && (
                 <MenuItem as="a" href="/rate-pay">
                   Rate & Pay
@@ -124,16 +144,22 @@ export default function RegHeader({ userData }: IUserProps) {
         <Menu>
           <MenuButton
             as={Avatar}
-            src={`data:image/jpeg;base64,${userData?.profile_photo}`}
+            src={
+              (userData?.role != "admin" && `data:image/jpeg;base64,${userData?.profile_photo}`) ||
+              "https://ih1.redbubble.net/image.2955130987.9629/raf,360x360,075,t,fafafa:ca443f4786.jpg"
+            }
             border="solid 1px #183D3D"
             size="md"
           />
           <MenuList>
-            <MenuItem color="black" as="a" href="/account">
-              Account
-            </MenuItem>
-            <MenuItem color="black">Settings</MenuItem>
-            <MenuDivider color="black" />
+            {userData?.role != "admin" && (
+              <>
+                <MenuItem color="black" as="a" href="/account">
+                  Account
+                </MenuItem>
+                <MenuDivider color="black" />
+              </>
+            )}
             <MenuItem onClick={logOut} color="black">
               Log Out
             </MenuItem>

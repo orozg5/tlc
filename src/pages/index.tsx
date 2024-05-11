@@ -6,8 +6,9 @@ import AboutUs from "@/components/features/LandingPage/AboutUs";
 import { GetServerSideProps } from "next";
 import IUserProps from "@/interfaces/IUserProps";
 import { getMe } from "@/utils/getMe";
+import getActiveNews from "@/helpers/getActiveNews";
 
-export default function Home({ userData }: IUserProps) {
+export default function Home({ userData, activeNews }: IUserProps) {
   return (
     <>
       <Head>
@@ -19,7 +20,7 @@ export default function Home({ userData }: IUserProps) {
 
       <Header userData={userData} />
       <Main />
-      <AboutUs />
+      <AboutUs activeNews={activeNews} />
       <Fotter id="contacts" />
     </>
   );
@@ -27,16 +28,17 @@ export default function Home({ userData }: IUserProps) {
 
 export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }) => {
   let userData = await getMe(req);
+  let activeNews = await getActiveNews();
 
   if (!userData) {
     return {
       props: {},
     };
   }
-
   return {
     props: {
       userData,
+      activeNews
     },
   };
 };
