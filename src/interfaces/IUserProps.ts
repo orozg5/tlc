@@ -14,6 +14,9 @@ import IDoneTerm from "./IDoneTerm";
 import IRated from "./IRated";
 import IComment from "./IComment";
 import INews from "./INews";
+import ICategory from "./ICategory";
+import IPost from "./IPost";
+import IForumComment from "./IForumComment";
 
 export default interface IUserProps {
   userData?: IUser;
@@ -41,4 +44,7 @@ export default interface IUserProps {
   myComments?: IComment[];
   allNews?: INews[];
   activeNews?: INews[];
+  categories?: ICategory[];
+  posts?: IPost[];
+  comments?: IForumComment[];
 }

@@ -32,13 +32,15 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
 
   if (!userData) {
     return {
-      props: {},
+      props: {
+        activeNews,
+      },
     };
   }
   return {
     props: {
       userData,
-      activeNews
+      activeNews,
     },
   };
 };

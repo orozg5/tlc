@@ -13,10 +13,10 @@ export default function Header({ userData }: IUserProps) {
       window.location.reload();
     }
   };
-  
+
   const router = useRouter();
   const handleAboutUsClick = () => {
-    if (router.pathname === "/instructions") {
+    if (router.pathname === "/instructions" || router.pathname === "/forum") {
       router.push("/");
       setTimeout(() => {
         const aboutusElement = document.getElementById("aboutus");
@@ -27,7 +27,7 @@ export default function Header({ userData }: IUserProps) {
     }
   };
   const handleContactsClick = () => {
-    if (router.pathname === "/instructions") {
+    if (router.pathname === "/instructions" || router.pathname === "/forum") {
       router.push("/");
       setTimeout(() => {
         const contactsElement = document.getElementById("contacts");
@@ -69,6 +69,11 @@ export default function Header({ userData }: IUserProps) {
               About us
             </Text>
           </ScrollLink>
+          <Link href="/forum">
+            <Text color="#183D3D" as="span" fontSize="20px" _hover={{ color: "#040D12", cursor: "pointer" }}>
+              Forum
+            </Text>
+          </Link>
           <Link href="/instructions">
             <Text color="#F1C93B" as="span" fontSize="20px" _hover={{ color: "#FAE392" }}>
               Instructions
@@ -117,7 +122,9 @@ export default function Header({ userData }: IUserProps) {
                 Home
               </MenuItem>
             )}
-            
+            <MenuItem as="a" href="/forum">
+              Forum
+            </MenuItem>
             <MenuItem as="a" href="/instructions">
               Instructions
             </MenuItem>

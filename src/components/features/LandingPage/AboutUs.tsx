@@ -3,7 +3,7 @@ import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function AboutUs({ activeNews }: IUserProps) {
-  const [slide, setSlide] = useState(1);
+  const [slide, setSlide] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
       const nextSlide = slide === (activeNews?.length || 0) ? 0 : slide + 1;
