@@ -40,7 +40,7 @@ export default function forum({ userData, categories, posts, comments }: IUserPr
   const [error, setError] = useState(false);
   const [errorPost, setErrorPost] = useState(false);
 
-  const [point, setPoint] = useState(0); //0 all categories, 1 certain category, 2 certain post
+  const [point, setPoint] = useState(0);
   const [names, setNames] = useState({
     category: "",
     post: "",
@@ -76,8 +76,20 @@ export default function forum({ userData, categories, posts, comments }: IUserPr
 
   const handleNewCategory = async () => {
     setError(false);
-    //check if name already exists
     if (newCategory.name && newCategory.user_id) {
+      let categoryExists = false;
+      categories?.forEach((c) => {
+        if (c.forum_category_name == newCategory.name) {
+          categoryExists = true;
+          setError(true);
+          return;
+        }
+      });
+      
+      if (categoryExists) {
+        return;
+      }
+
       try {
         const res = await createCategory(newCategory);
         if (res.status == 200) {
