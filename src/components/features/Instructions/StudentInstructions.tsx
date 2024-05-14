@@ -83,6 +83,12 @@ export default function StudentInstructions({
   const { isOpen: isOpenMaterials, onOpen: onOpenMaterials, onClose: onCloseMaterials } = useDisclosure();
   const cancelRef = useRef(null);
 
+  const [displayed, setDisplayed] = useState(5);
+
+  const handleShowMore = () => {
+    setDisplayed((prev) => prev + 5);
+  };
+
   const [reserve, setReserve] = useState({ term: "", id: "" });
   const [events, setEvents] = useState<IEvent[]>();
   const [theTerms, setTheTerms] = useState<ITerm[]>();
@@ -146,6 +152,7 @@ export default function StudentInstructions({
   };
 
   const clearFilter = () => {
+    setDisplayed(5);
     setFilter({
       subject_id: "",
       grade: "",
@@ -284,7 +291,7 @@ export default function StudentInstructions({
             >
               <option value="">Select</option>
               <option value="1e">1st, elementary</option>
-              <option value="2e">2st, elementary</option>
+              <option value="2e">2nd, elementary</option>
               <option value="3e">3rd, elementary</option>
               <option value="4e">4th, elementary</option>
               <option value="5e">5th, elementary</option>
@@ -292,11 +299,11 @@ export default function StudentInstructions({
               <option value="7e">7th, elementary</option>
               <option value="8e">8th, elementary</option>
               <option value="1h">1st, high school</option>
-              <option value="2h">2st, high school</option>
+              <option value="2h">2nd, high school</option>
               <option value="3h">3rd, high school</option>
               <option value="4h">4th, high school</option>
               <option value="1u">1st, university</option>
-              <option value="2u">2st, university</option>
+              <option value="2u">2nd, university</option>
               <option value="3u">3rd, university</option>
               <option value="4u">4th, university</option>
               <option value="5u">5th, university</option>
@@ -480,6 +487,7 @@ export default function StudentInstructions({
                       new Date(filter.endDate).toLocaleDateString()
                 ))
           )
+          .slice(0, displayed)
           .map((instruction) => (
             <Flex
               _hover={{ cursor: "pointer" }}
@@ -561,6 +569,19 @@ export default function StudentInstructions({
             </Flex>
           ))}
       </Flex>
+
+      {(allInstructions?.length || 0) > displayed && (
+        <Button
+          mt="32px"
+          bg="#183D3D"
+          color="#eeeeee"
+          fontWeight="50px"
+          _hover={{ bg: "#5C8374", color: "#040D12" }}
+          onClick={handleShowMore}
+        >
+          Show More
+        </Button>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay bg="blackAlpha.800" />
