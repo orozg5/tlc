@@ -179,7 +179,7 @@ export default function news({ userData, allNews }: IUserProps) {
         </Flex>
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalCloseButton />
@@ -245,7 +245,7 @@ export default function news({ userData, allNews }: IUserProps) {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
+      <Modal isOpen={isOpenEdit} onClose={onCloseEdit} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalCloseButton />

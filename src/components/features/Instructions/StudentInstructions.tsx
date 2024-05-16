@@ -327,7 +327,7 @@ export default function StudentInstructions({
             >
               <option value="">Select</option>
               <option value="online">online</option>
-              <option value="irl">irl</option>
+              <option value="irl">in person</option>
               <option value="other">other</option>
             </Select>
           </Box>
@@ -544,7 +544,7 @@ export default function StudentInstructions({
                     ))}
                 </Text>
                 <Text>
-                  {instruction.type},{" "}
+                {instruction.type == "irl" ? "in person" : instruction.type},{" "}
                   {
                     cities?.find(
                       (city) =>
@@ -650,7 +650,7 @@ export default function StudentInstructions({
                   </span>
                 ))}
             </Text>
-            <Text>{info.instruction?.type}</Text>
+            <Text>{info.instruction?.type == "irl" ? "in person" : info.instruction?.type}</Text>
             <Text>{info.instruction?.price} €/h</Text>
             <Text mt="16px">{info.instruction?.description}</Text>
 

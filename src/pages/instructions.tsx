@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
 
   let userData = null;
   let userInstructions = null;
-  if (session) {
+  if (session && (session.role == "tutor" || session.role == "student")) {
     userData = await getCurrentUserInfo(req);
     userInstructions = await getCurrentUserInstructions(req);
   }

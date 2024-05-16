@@ -34,7 +34,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
 import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
-import { FaGenderless, FaSchool } from "react-icons/fa";
+import { FaGenderless, FaRegComment, FaSchool } from "react-icons/fa";
 import { FiEdit3 } from "react-icons/fi";
 import { IoLocationOutline } from "react-icons/io5";
 import { LuCake } from "react-icons/lu";
@@ -265,7 +265,7 @@ export default function TutorInstructions({
                       {g && ", "}
                     </span>
                   ))}
-                {i.type}
+                {i.type == "irl" ? "in person" : i.type}
               </Text>
               <Text mt="8px" w={{ base: "264px", sm: "400px", md: "632px" }}>
                 {i.description}
@@ -278,7 +278,7 @@ export default function TutorInstructions({
         </Flex>
       )}
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalHeader textAlign="center">Create new instruction</ModalHeader>
@@ -320,7 +320,7 @@ export default function TutorInstructions({
                 placeholder="Select"
               >
                 <option value="online">online</option>
-                <option value="irl">irl</option>
+                <option value="irl">in person</option>
                 <option value="other">other</option>
               </Select>
 
@@ -329,7 +329,7 @@ export default function TutorInstructions({
                 id="description"
                 onChange={handleInstructionChange}
                 placeholder="Say something about your instructions..."
-                w="264px"
+                w={{ base: "264px", sm: "300px", md: "364px", lg: "464px" }}
                 maxLength={300}
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
@@ -342,7 +342,7 @@ export default function TutorInstructions({
                 id="price"
                 type="number"
                 onChange={handleInstructionChange}
-                w="264px"
+                w={{ base: "264px", sm: "300px", md: "364px", lg: "464px" }}
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
                 focusBorderColor="#040D12"
@@ -373,7 +373,7 @@ export default function TutorInstructions({
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
+      <Modal isOpen={isOpenEdit} onClose={onCloseEdit} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalHeader textAlign="center">Edit instruction</ModalHeader>
@@ -417,7 +417,7 @@ export default function TutorInstructions({
                 placeholder="Select"
               >
                 <option value="online">online</option>
-                <option value="irl">irl</option>
+                <option value="irl">in person</option>
                 <option value="other">other</option>
               </Select>
 
@@ -427,7 +427,7 @@ export default function TutorInstructions({
                 onChange={handleEditChange}
                 value={editInstr.description}
                 placeholder="Say something about your instructions..."
-                w="264px"
+                w={{ base: "264px", sm: "300px", md: "364px", lg: "464px" }}
                 maxLength={300}
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
@@ -441,7 +441,7 @@ export default function TutorInstructions({
                 type="number"
                 onChange={handleEditChange}
                 value={editInstr.price}
-                w="264px"
+                w={{ base: "264px", sm: "300px", md: "364px", lg: "464px" }}
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
                 focusBorderColor="#040D12"
@@ -575,27 +575,32 @@ export default function TutorInstructions({
                   <Text>+385 {s.phone}</Text>
                 </Flex>
 
-                <Button
-                  alignSelf="flex-start"
-                  fontWeight="50px"
-                  mt="16px"
-                  bgColor="#183D3D"
-                  color="#eeeeee"
-                  _hover={{ bgColor: "#5C8374", color: "#040D12" }}
-                  onClick={() => {
-                    setStudent({ id: s.user_id || "", name: s.first_name + " " + s.last_name });
-                    onOpenComments();
-                  }}
-                >
-                  Comments
-                </Button>
+                <Flex mt="16px" align="center" gap="8px">
+                  <Button
+                    alignSelf="flex-start"
+                    fontWeight="50px"
+                    bgColor="#183D3D"
+                    color="#eeeeee"
+                    _hover={{ bgColor: "#5C8374", color: "#040D12" }}
+                    onClick={() => {
+                      setStudent({ id: s.user_id || "", name: s.first_name + " " + s.last_name });
+                      onOpenComments();
+                    }}
+                  >
+                    Comments
+                  </Button>
+                  <Flex align="center" gap="4px">
+                    <FaRegComment />
+                    <Text>{myComments?.filter((c) => c.student_id == s.user_id).length}</Text>
+                  </Flex>
+                </Flex>
               </Flex>
             </Flex>
           ))}
         </Flex>
       )}
 
-      <Modal isOpen={isOpenComments} onClose={onCloseComments}>
+      <Modal isOpen={isOpenComments} onClose={onCloseComments} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalHeader textAlign="center">Comments on {student.name}</ModalHeader>
@@ -628,7 +633,7 @@ export default function TutorInstructions({
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenNewComment} onClose={onCloseNewComment}>
+      <Modal isOpen={isOpenNewComment} onClose={onCloseNewComment} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalHeader textAlign="center">Comment {student.name}</ModalHeader>

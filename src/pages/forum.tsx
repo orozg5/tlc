@@ -363,7 +363,7 @@ export default function forum({ userData, categories, posts, comments }: IUserPr
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenPost} onClose={onClosePost}>
+      <Modal isOpen={isOpenPost} onClose={onClosePost} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalCloseButton />
@@ -373,7 +373,7 @@ export default function forum({ userData, categories, posts, comments }: IUserPr
             <Input
               value={newPost.name}
               onChange={(e) => setNewPost({ ...newPost, name: e.target.value })}
-              w="264px"
+              w={{base: "264px", sm: "300px", md: "364px", lg: "464px"}}
               borderColor="#040D12"
               _hover={{ borderColor: "#5C8374" }}
               focusBorderColor="#040D12"
@@ -382,7 +382,7 @@ export default function forum({ userData, categories, posts, comments }: IUserPr
             <Textarea
               value={newPost.content}
               onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-              w="264px"
+              w={{base: "264px", sm: "300px", md: "364px", lg: "464px"}}
               borderColor="#040D12"
               _hover={{ borderColor: "#5C8374" }}
               focusBorderColor="#040D12"
@@ -414,7 +414,7 @@ export default function forum({ userData, categories, posts, comments }: IUserPr
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={isOpenComment} onClose={onCloseComment}>
+      <Modal isOpen={isOpenComment} onClose={onCloseComment} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent color="#040D12" bg="#93B1A6">
           <ModalCloseButton />
@@ -423,7 +423,7 @@ export default function forum({ userData, categories, posts, comments }: IUserPr
             <Textarea
               value={newComment.content}
               onChange={(e) => setNewComment({ ...newComment, content: e.target.value })}
-              w="264px"
+              w={{base: "264px", sm: "300px", md: "364px", lg: "464px"}}
               borderColor="#040D12"
               _hover={{ borderColor: "#5C8374" }}
               focusBorderColor="#040D12"
