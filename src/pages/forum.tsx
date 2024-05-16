@@ -466,7 +466,7 @@ export const getServerSideProps: GetServerSideProps<IUserProps> = async ({ req }
     role: "not-registered",
   };
 
-  if (session) {
+  if (session && (session.role == "tutor" || session.role == "student")) {
     userData = await getCurrentUserInfo(req);
   }
 
