@@ -171,7 +171,7 @@ export default function news({ userData, allNews }: IUserProps) {
               </Flex>
               <Heading mt="8px">{n.news_name}</Heading>
               <Text color="#93B1A6">
-                {convertTime(n.date || "").split(",")[0]} - {convertTime(n.end_date || "").split(",")[0]}
+                {convertTime(n.date || "").split(",")[0]} - {convertTime(n.end_date || "").split(",")[0] + ", 23:59"}
               </Text>
               <Text mt="8px">{n.description}</Text>
             </Flex>
@@ -197,6 +197,7 @@ export default function news({ userData, allNews }: IUserProps) {
 
             <Text mt="8px">Description</Text>
             <Textarea
+              minH="200px"
               value={news.description}
               onChange={(e) => setNews({ ...news, description: e.target.value })}
               borderColor="#183D3D"
@@ -263,6 +264,7 @@ export default function news({ userData, allNews }: IUserProps) {
 
             <Text mt="8px">Description</Text>
             <Textarea
+              minH="100px"
               value={news.description}
               onChange={(e) => setNews({ ...news, description: e.target.value })}
               borderColor="#183D3D"

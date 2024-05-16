@@ -99,7 +99,7 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
 
   return (
     <>
-      <Modal isOpen={true} onClose={() => {}} isCentered={true}>
+      <Modal isOpen={true} onClose={() => {}} isCentered={true} size={{ base: "sm", sm: "md", md: "xl", lg: "2xl" }}>
         <ModalOverlay bg="blackAlpha.800" />
         <ModalContent bgColor="#93B1A6" color="#040D12">
           <ModalHeader textAlign="center">Setup your profile</ModalHeader>
@@ -155,7 +155,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                 id="first_name"
                 value={user?.first_name}
                 onChange={handleUserChange}
-                w="264px"
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
                 focusBorderColor="#040D12"
@@ -166,7 +165,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                 id="last_name"
                 value={user?.last_name}
                 onChange={handleUserChange}
-                w="264px"
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
                 focusBorderColor="#040D12"
@@ -177,7 +175,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                 id="date_of_birth"
                 value={user?.date_of_birth ? new Date(user.date_of_birth).toISOString().split("T")[0] : ""}
                 onChange={handleUserChange}
-                w="264px"
                 type="date"
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
@@ -237,7 +234,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
               <Select
                 id="city_id"
                 onChange={handleUserChange}
-                w="264px"
                 borderColor="#040D12"
                 _hover={{ borderColor: "#5C8374" }}
                 focusBorderColor="#040D12"
@@ -249,7 +245,7 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
               </Select>
 
               <Text mt="8px">Phone</Text>
-              <InputGroup w="264px" borderColor="#040D12">
+              <InputGroup borderColor="#040D12">
                 <InputLeftAddon bgColor="#5C8374">+385</InputLeftAddon>
                 <Input
                   id="phone"
@@ -268,7 +264,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                     id="school"
                     value={user?.school}
                     onChange={handleUserChange}
-                    w="264px"
                     borderColor="#040D12"
                     _hover={{ borderColor: "#5C8374" }}
                     focusBorderColor="#040D12"
@@ -279,13 +274,12 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                     id="grade"
                     value={user?.grade}
                     onChange={handleUserChange}
-                    w="264px"
                     borderColor="#040D12"
                     _hover={{ borderColor: "#5C8374" }}
                     focusBorderColor="#040D12"
                   >
                     <option value="1e">1st, elementary</option>
-                    <option value="2e">2st, elementary</option>
+                    <option value="2e">2nd, elementary</option>
                     <option value="3e">3rd, elementary</option>
                     <option value="4e">4th, elementary</option>
                     <option value="5e">5th, elementary</option>
@@ -293,11 +287,11 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                     <option value="7e">7th, elementary</option>
                     <option value="8e">8th, elementary</option>
                     <option value="1h">1st, high school</option>
-                    <option value="2h">2st, high school</option>
+                    <option value="2h">2nd, high school</option>
                     <option value="3h">3rd, high school</option>
                     <option value="4h">4th, high school</option>
                     <option value="1u">1st, university</option>
-                    <option value="2u">2st, university</option>
+                    <option value="2u">2nd, university</option>
                     <option value="3u">3rd, university</option>
                     <option value="4u">4th, university</option>
                     <option value="5u">5th, university</option>
@@ -310,7 +304,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                   <Text mt="8px">Educational attainment</Text>
                   <Select
                     id="educational_attainment"
-                    w="264px"
                     value={user?.educational_attainment}
                     onChange={handleUserChange}
                     borderColor="#040D12"
@@ -329,7 +322,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                     id="finished_school"
                     value={user?.finished_school}
                     onChange={handleUserChange}
-                    w="264px"
                     borderColor="#040D12"
                     _hover={{ borderColor: "#5C8374" }}
                     focusBorderColor="#040D12"
@@ -341,7 +333,6 @@ export default function ProfileSetup({ userData, cities }: IUserProps) {
                     value={user?.description}
                     onChange={handleUserChange}
                     placeholder="Say something about yourself..."
-                    w="264px"
                     maxLength={300}
                     borderColor="#040D12"
                     _hover={{ borderColor: "#5C8374" }}
